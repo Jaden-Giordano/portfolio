@@ -1,0 +1,22 @@
+.navbarbutton {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+}
+
+.navbarbutton .marker {
+    width: 4px;
+    height: 100%;
+
+    margin-right: 12px;
+}
+
+.navbarbutton .active {
+    background-color: #1199ee;
+}
+
+.navbarbutton .inactive {
+    background-color: transparent;
+}

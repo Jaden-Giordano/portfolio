@@ -1,0 +1,39 @@
+.home {
+	width: 100%;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+	position: absolute;
+	top: 40vh;
+	text-align: center;
+}
+
+.home hr {
+	width: 250px;
+}
+
+.home .title {
+	top: calc(50vh - 50px);
+	font-size: 36px;
+	font-family: 'Aquatico', sans-serif;
+	margin: 4px 0;
+}
+
+.home .list {
+	top: 50vh;
+	width: 100%;
+	margin: 5px 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.home .list span {
+	text-transform: uppercase;
+	padding: 0 8px;
+}
+
+.home .list svg {
+	width: 6px;
+	height: 6px;
+}
