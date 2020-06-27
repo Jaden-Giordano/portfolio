@@ -199,8 +199,8 @@ export default class Boid {
         this.ctx.rotate(this.velocity.direction());
         this.ctx.beginPath();
         this.ctx.moveTo(0, 0);
-        this.ctx.lineTo(-10, -2.5);
-        this.ctx.lineTo(-10, 2.5);
+        this.ctx.lineTo(-4, -2);
+        this.ctx.lineTo(-4, 2);
         this.ctx.closePath();
 
         this.ctx.lineWidth = 10;
