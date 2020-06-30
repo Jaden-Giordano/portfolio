@@ -1,3 +1,11 @@
 module.exports = {
-  lintOnSave: false
+  configureWebpack: {
+    module: {
+      rules: [{
+        test: /\.wasm$/,
+        loader: 'wasm-loader',
+      }],
+    },
+  },
+  lintOnSave: false,
 };
