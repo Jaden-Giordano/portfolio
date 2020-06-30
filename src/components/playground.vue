@@ -1,5 +1,7 @@
 <template>
-  <canvas :id="id" />
+  <div class="playground">
+    <canvas :id="id" />
+  </div>
 </template>
 
 <script>
