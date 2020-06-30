@@ -2,6 +2,12 @@
 node_modules
 /dist
 
+# Yarn
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
 # local env files
 .env.local
 .env.*.local
