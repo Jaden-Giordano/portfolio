@@ -13,3 +13,11 @@
     }),
   }
 </script>
+
+<style lang="scss">
+  .playground {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
+</style>

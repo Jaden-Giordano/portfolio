@@ -1,28 +1,14 @@
 <template>
-  <div class="page" :style="{ top: `${position}px` }">
+  <div class="page">
+    <playground />
     <slot />
   </div>
 </template>
 
-<script>
-  import { computed } from '@vue/composition-api';
-
-  export default {
-    props: {
-      page: Number,
-    },
-    setup(props) {
-      const position = computed(() => props.page * window.innerHeight);
-
-      return { position };
-    },
-  };
-</script>
-
 <style lang="scss">
   .page {
     height: 100%;
-    position: absolute;
+    position: relative;
     width: 100%;
   }
 </style>
