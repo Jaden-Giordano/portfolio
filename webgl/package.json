@@ -1,18 +1,15 @@
 {
-  "name": "@portfolio/main",
+  "name": "@portfolio/webgl",
   "description": "description",
   "version": "1.0.0",
-  "private": true,
   "contributors": [
     "Jaden Giordano <thejadenjack@gmail.com>",
     "Aidan Chelig <icyhate@gmail.com>"
   ],
   "license": "MIT",
-  "workspaces": [
-    "webgl",
-    "frontend"
-  ],
   "scripts": {
-    "build": "yarn workspaces foreach run build"
-  }
+    "build": "wasm-pack build"
+  },
+  "main": "pkg/portfolio_bg.wasm",
+  "private": true
 }

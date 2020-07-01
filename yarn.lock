@@ -1207,6 +1207,43 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@portfolio/frontend@workspace:frontend":
+  version: 0.0.0-use.local
+  resolution: "@portfolio/frontend@workspace:frontend"
+  dependencies:
+    "@portfolio/webgl": "workspace:*"
+    "@vue/cli-plugin-babel": ~4.4.0
+    "@vue/cli-plugin-eslint": ~4.4.0
+    "@vue/cli-service": ~4.4.0
+    "@vue/composition-api": ^0.6.7
+    "@vue/eslint-config-prettier": ^6.0.0
+    babel-eslint: ^10.1.0
+    core-js: ^3.6.5
+    eslint: ^6.7.2
+    eslint-plugin-prettier: ^3.1.3
+    eslint-plugin-vue: ^6.2.2
+    prettier: ^1.19.1
+    sass: ^1.26.5
+    sass-loader: ^8.0.2
+    uid: ^1.0.0
+    vue: ^2.6.11
+    vue-template-compiler: ^2.6.11
+    wasm-loader: ^1.3.0
+  languageName: unknown
+  linkType: soft
+
+"@portfolio/main@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@portfolio/main@workspace:."
+  languageName: unknown
+  linkType: soft
+
+"@portfolio/webgl@workspace:*, @portfolio/webgl@workspace:webgl":
+  version: 0.0.0-use.local
+  resolution: "@portfolio/webgl@workspace:webgl"
+  languageName: unknown
+  linkType: soft
+
 "@soda/friendly-errors-webpack-plugin@npm:^1.7.1":
   version: 1.7.1
   resolution: "@soda/friendly-errors-webpack-plugin@npm:1.7.1"
@@ -8027,30 +8064,6 @@ fsevents@~2.1.2:
   checksum: a766497a3da0a8661067884828ccfa2089f0105ab6d617978bf9120e472f0610288c14cefcf188dfa94c0eee701c4f92c93a4581e85547b69b6bf2361adc5419
   languageName: node
   linkType: hard
-
-"portfolio@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "portfolio@workspace:."
-  dependencies:
-    "@vue/cli-plugin-babel": ~4.4.0
-    "@vue/cli-plugin-eslint": ~4.4.0
-    "@vue/cli-service": ~4.4.0
-    "@vue/composition-api": ^0.6.7
-    "@vue/eslint-config-prettier": ^6.0.0
-    babel-eslint: ^10.1.0
-    core-js: ^3.6.5
-    eslint: ^6.7.2
-    eslint-plugin-prettier: ^3.1.3
-    eslint-plugin-vue: ^6.2.2
-    prettier: ^1.19.1
-    sass: ^1.26.5
-    sass-loader: ^8.0.2
-    uid: ^1.0.0
-    vue: ^2.6.11
-    vue-template-compiler: ^2.6.11
-    wasm-loader: ^1.3.0
-  languageName: unknown
-  linkType: soft
 
 "posix-character-classes@npm:^0.1.0":
   version: 0.1.1
