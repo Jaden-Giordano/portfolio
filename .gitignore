@@ -28,4 +28,5 @@ pnpm-debug.log*
 *.sw?
 
 #rust builds
-/webgl/target
+/srclib/target
+/srclib/pkg
