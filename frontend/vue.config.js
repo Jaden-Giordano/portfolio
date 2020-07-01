@@ -6,11 +6,7 @@ module.exports = {
           .type('javascript/auto')
           .use('wasm-loader')
           .loader('wasm-loader');
-  },
-  configureWebpack: {
-    resolve: {
-      extensions: ['.wasm', '.vue', '.js'],
-    },
+    config.resolve.extensions.add('.wasm');
   },
   lintOnSave: false,
 };

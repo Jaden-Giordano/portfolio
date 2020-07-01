@@ -10,6 +10,6 @@
   "scripts": {
     "build": "wasm-pack build"
   },
-  "main": "pkg/webgl_bg.wasm",
+  "main": "pkg/webgl.js",
   "private": true
 }

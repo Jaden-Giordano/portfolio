@@ -1212,6 +1212,7 @@ __metadata:
   resolution: "@portfolio/frontend@workspace:frontend"
   dependencies:
     "@portfolio/webgl": "workspace:webgl"
+    "@vue/babel-preset-app": ^4.4.6
     "@vue/cli-plugin-babel": ~4.4.0
     "@vue/cli-plugin-eslint": ~4.4.0
     "@vue/cli-service": ~4.4.0
