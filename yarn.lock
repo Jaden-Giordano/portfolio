@@ -1211,7 +1211,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@portfolio/frontend@workspace:frontend"
   dependencies:
-    "@portfolio/webgl": "workspace:*"
+    "@portfolio/webgl": "workspace:webgl"
     "@vue/cli-plugin-babel": ~4.4.0
     "@vue/cli-plugin-eslint": ~4.4.0
     "@vue/cli-service": ~4.4.0
@@ -1238,7 +1238,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@portfolio/webgl@workspace:*, @portfolio/webgl@workspace:webgl":
+"@portfolio/webgl@workspace:webgl":
   version: 0.0.0-use.local
   resolution: "@portfolio/webgl@workspace:webgl"
   languageName: unknown

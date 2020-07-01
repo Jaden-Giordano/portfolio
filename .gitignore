@@ -1,6 +1,8 @@
 .DS_Store
 node_modules
 /dist
+target/
+pkg/
 
 # Yarn
 .yarn/*
@@ -26,7 +28,3 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
-
-#rust builds
-/srclib/target
-/srclib/pkg
