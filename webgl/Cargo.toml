@@ -1,13 +1,10 @@
 [package]
-name = "webgl"
+name = "portfolio"
 version = "0.1.0"
-authors = ["Diggory Blake"]
+authors = ["Aidan Chelig", "Jaden Giordano"]
 
 [dependencies]
-stdweb = "0.4.20"
-stdweb-derive = "0.5.3"
-serde = "1.0.0"
-serde_derive = "1.0.0"
+wasm-bindgen = "0.2.64"
 
-[build-dependencies]
-webgl_generator = "0.1.0"
+[lib]
+crate-type = ["cdylib", "rlib"]
