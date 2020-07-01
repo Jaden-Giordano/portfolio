@@ -1,10 +1,15 @@
 module.exports = {
+  chainWebpack: (config) => {
+    config.module
+          .rule('wasm')
+          .test(/\.wasm(\?.*)?$/)
+          .type('javascript/auto')
+          .use('wasm-loader')
+          .loader('wasm-loader');
+  },
   configureWebpack: {
-    module: {
-      rules: [{
-        test: /\.wasm$/,
-        loader: 'wasm-loader',
-      }],
+    resolve: {
+      extensions: ['.wasm', '.vue', '.js'],
     },
   },
   lintOnSave: false,
