@@ -1,6 +1,6 @@
 <template>
   <div class="playground">
-    <canvas :id="id" />
+    <canvas :height="height" id="canvas" :width="width" />
   </div>
 </template>
 
@@ -9,7 +9,9 @@
 
   export default {
     setup: () => ({
+      height: window.innerHeight,
       id: uid(8),
+      width: window.innerWidth,
     }),
   }
 </script>
@@ -17,7 +19,6 @@
 <style lang="scss">
   .playground {
     height: 100%;
-    position: absolute;
     width: 100%;
   }
 </style>

@@ -35,10 +35,19 @@ pub fn start() -> Result<(), JsValue> {
     let program = link_program(&context, &vert_shader, &frag_shader)?;
     context.use_program(Some(&program));
 
-    let vertices: [f32; 9] = [-0.7, -0.7, 0.0, 0.7, -0.7, 0.0, 0.0, 0.7, 0.0];
+    let vertices: [f32; 12] = [
+        0.0, 0.0, 0.0,
+        0.5, 0.0, 0.0,
+        0.5, 0.5, 0.0,
+        0.0, 0.5, 0.0,
+    ];
+    let indices: [u16; 6] = [
+        0, 1, 2,
+        2, 3, 0,
+    ];
 
-    let buffer = context.create_buffer().ok_or("failed to create buffer")?;
-    context.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, Some(&buffer));
+    let vertex_buffer = context.create_buffer().ok_or("failed to create buffer")?;
+    context.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, Some(&vertex_buffer));
 
     // Note that `Float32Array::view` is somewhat dangerous (hence the
     // `unsafe`!). This is creating a raw view into our module's
@@ -61,13 +70,27 @@ pub fn start() -> Result<(), JsValue> {
     context.vertex_attrib_pointer_with_i32(0, 3, WebGlRenderingContext::FLOAT, false, 0, 0);
     context.enable_vertex_attrib_array(0);
 
+    let index_buffer = context.create_buffer().ok_or("failed to create buffer")?;
+    context.bind_buffer(WebGlRenderingContext::ELEMENT_ARRAY_BUFFER, Some(&index_buffer));
+
+    unsafe {
+        let index_array = js_sys::Uint16Array::view(&indices);
+
+        context.buffer_data_with_array_buffer_view(
+            WebGlRenderingContext::ELEMENT_ARRAY_BUFFER,
+            &index_array,
+            WebGlRenderingContext::STATIC_DRAW,
+        );
+    }
+
     context.clear_color(0.0, 0.0, 0.0, 1.0);
     context.clear(WebGlRenderingContext::COLOR_BUFFER_BIT);
 
-    context.draw_arrays(
+    context.draw_elements_with_i32(
         WebGlRenderingContext::TRIANGLES,
+        6,
+        WebGlRenderingContext::UNSIGNED_SHORT,
         0,
-        (vertices.len() / 3) as i32,
     );
     Ok(())
 }

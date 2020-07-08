@@ -5,7 +5,7 @@ __metadata:
   version: 4
   cacheKey: 4
 
-"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.0.0-beta.36, @babel/code-frame@npm:^7.10.4":
+"@babel/code-frame@npm:^7.0.0, @babel/code-frame@npm:^7.10.4":
   version: 7.10.4
   resolution: "@babel/code-frame@npm:7.10.4"
   dependencies:
@@ -25,7 +25,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.0.0-beta.39, @babel/core@npm:^7.9.6":
+"@babel/core@npm:^7.9.6":
   version: 7.10.4
   resolution: "@babel/core@npm:7.10.4"
   dependencies:
@@ -1107,7 +1107,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.0.0-beta.39, @babel/traverse@npm:^7.10.4, @babel/traverse@npm:^7.7.0":
+"@babel/traverse@npm:^7.10.4, @babel/traverse@npm:^7.7.0":
   version: 7.10.4
   resolution: "@babel/traverse@npm:7.10.4"
   dependencies:
@@ -1124,7 +1124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.0.0-beta.39, @babel/types@npm:^7.10.4, @babel/types@npm:^7.4.4, @babel/types@npm:^7.7.0":
+"@babel/types@npm:^7.10.4, @babel/types@npm:^7.4.4, @babel/types@npm:^7.7.0":
   version: 7.10.4
   resolution: "@babel/types@npm:7.10.4"
   dependencies:
@@ -1229,7 +1229,7 @@ __metadata:
     uid: ^1.0.0
     vue: ^2.6.11
     vue-template-compiler: ^2.6.11
-    wasm-loader: ^1.3.0
+    webpack: ^4.43.0
   languageName: unknown
   linkType: soft
 
@@ -2316,15 +2316,6 @@ __metadata:
   dependencies:
     object.assign: ^4.1.0
   checksum: 6745b8edca96f6c8bc34ab65935b5676358d2e55323e8e823b8de7aa353e3e6398a495ce434c9c36ad5fb1609467a1b1a0028946e1490bf7de8f97df3ae7f3b1
-  languageName: node
-  linkType: hard
-
-"babylon@npm:^7.0.0-beta.39":
-  version: 7.0.0-beta.47
-  resolution: "babylon@npm:7.0.0-beta.47"
-  bin:
-    babylon: ./bin/babylon.js
-  checksum: 1118a398403a00db8f56d978d4e5af02b17c997c0dd528cabd048fcc3caf022e0f9d14fa8504729b34352120306b14f7c3ba747167febbf769f0bb4aff48a558
   languageName: node
   linkType: hard
 
@@ -6713,13 +6704,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"long@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "long@npm:3.2.0"
-  checksum: abfdbab5ddaea449b64d0f44d7450d0f3b5b79bc8a934f29d41cb728e5557831d5cb1c8ef93fc8da77563b39a6d807ab1e8f87c7e70ff5ead5b53803e3eb4c8f
-  languageName: node
-  linkType: hard
-
 "loose-envify@npm:^1.0.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
@@ -10759,31 +10743,6 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"wasm-dce@npm:^1.0.0":
-  version: 1.0.2
-  resolution: "wasm-dce@npm:1.0.2"
-  dependencies:
-    "@babel/core": ^7.0.0-beta.39
-    "@babel/traverse": ^7.0.0-beta.39
-    "@babel/types": ^7.0.0-beta.39
-    babylon: ^7.0.0-beta.39
-    webassembly-interpreter: 0.0.30
-  checksum: c2fe45422bcc60069c6169c90196d833e36afcf41261069b01cf76071ca4ffd5c93f91f307bff598a00c57235e7056f79142022adcd902f681f67c0535fa6d0a
-  languageName: node
-  linkType: hard
-
-"wasm-loader@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "wasm-loader@npm:1.3.0"
-  dependencies:
-    loader-utils: ^1.1.0
-    wasm-dce: ^1.0.0
-  peerDependencies:
-    wasm-dce: 1.x
-  checksum: 82340571c27b945416166bcee1cc05beb260af81a15efe2b3e42f3417142bb4da36ef4feafd3828d4bf405d62b342c803dd6c83775713225e26cdef084c61fa3
-  languageName: node
-  linkType: hard
-
 "watchpack-chokidar2@npm:^2.0.0":
   version: 2.0.0
   resolution: "watchpack-chokidar2@npm:2.0.0"
@@ -10825,31 +10784,6 @@ fsevents@~2.1.2:
   dependencies:
     defaults: ^1.0.3
   checksum: abf8ba432dd19a95af63895de6af932900a9451e175745551aeca0fd2d46604bc72ff80aa83adc3f67fb8389191329340e2864aefcf20655ffe91f0dbee5d953
-  languageName: node
-  linkType: hard
-
-"webassembly-floating-point-hex-parser@npm:0.1.2":
-  version: 0.1.2
-  resolution: "webassembly-floating-point-hex-parser@npm:0.1.2"
-  checksum: fd774a57b158811661a51c844e6083537ea3b79f9fb208b6b908572f0bf18c8032e04e621e050b72ee8c706629d22227754f83b3008ba1e1ceafa1a84f4e347f
-  languageName: node
-  linkType: hard
-
-"webassembly-interpreter@npm:0.0.30":
-  version: 0.0.30
-  resolution: "webassembly-interpreter@npm:0.0.30"
-  dependencies:
-    "@babel/code-frame": ^7.0.0-beta.36
-    long: ^3.2.0
-    webassembly-floating-point-hex-parser: 0.1.2
-  bin:
-    wasm: ./lib/bin/repl.js
-    wasm2wast: ./lib/bin/wasm2wast.js
-    wasmast: ./lib/bin/wasmast.js
-    wasmdump: ./lib/bin/wasmdump.js
-    wasmrun: ./lib/bin/wasmrun.js
-    wastast: ./lib/bin/wastast.js
-  checksum: d38bfe47e09bd77dc965e73ec06131819a95e64f009e95ef9d5daed4d423f629fbf9ae960c88ef84d517f82285996dda0e49e0f7c02d19509bad170d06641e4a
   languageName: node
   linkType: hard
 
@@ -10979,7 +10913,7 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"webpack@npm:4.43.0, webpack@npm:^4.0.0":
+"webpack@npm:4.43.0, webpack@npm:^4.0.0, webpack@npm:^4.43.0":
   version: 4.43.0
   resolution: "webpack@npm:4.43.0"
   dependencies:
