@@ -1,19 +1,23 @@
 use wasm_bindgen::prelude::*;
 use web_sys::*;
 
-//type GL = web_sys::WebGlRenderingContext;
+type GL = web_sys::WebGlRenderingContext;
 
+mod common_funcs;
 mod gl_setup;
+mod programs;
+mod shaders;
 
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
-    fn log(s:&str);
+    fn log(s: &str);
 }
 
 #[wasm_bindgen]
 pub struct FolioClient {
     gl: WebGlRenderingContext,
+    program_color_2d: programs::Color2D,
 }
 
 #[wasm_bindgen]
@@ -24,16 +28,19 @@ impl FolioClient {
         let gl = gl_setup::init_webgl_ctx().unwrap();
 
         Self {
+            program_color_2d: programs::Color2D::new(&gl),
             gl: gl,
         }
     }
 
     pub fn update(&mut self, _time: f32, _height: f32, _width: f32) -> Result<(), JsValue> {
-
         Ok(())
     }
 
     pub fn render(&self) {
-       
+        self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
+
+        self.program_color_2d
+            .render(&self.gl, 0., 10., 0., 10., 10., 10.)
     }
 }
