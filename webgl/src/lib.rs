@@ -41,6 +41,6 @@ impl FolioClient {
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
         self.program_color_2d
-            .render(&self.gl, 0., 10., 0., 10., 10., 10.)
+            .render(&self.gl, 0., 10., 0., 10., 800., 800.)
     }
 }

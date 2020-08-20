@@ -47,13 +47,37 @@
       display: flex;
       font-family: Roboto;
       font-size: 1rem;
+      margin-top: 0.75rem;
 
       span {
         margin-right: 0.75rem;
-      }
 
-      &:last-child {
-        margin-right: 0;
+        &:nth-child(1) {
+          color: #1199ee;
+        }
+
+        &:nth-child(2) {
+          color: #66bb66;
+        }
+
+        &:nth-child(3) {
+          color: #ffaa22;
+        }
+
+        &::after {
+          color: white;
+          margin-left: 0.5rem;
+          content: ' \2022';
+        }
+
+        &:last-child {
+          margin-right: 0;
+
+          &::after {
+            margin-left: 0;
+            content: '';
+          }
+        }
       }
     }
   }

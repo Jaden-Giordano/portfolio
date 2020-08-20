@@ -16,6 +16,7 @@
 
 <style lang="scss">
   .container {
+    background-color: #202020;
     height: 100%;
     width: 100%;
   }

@@ -1216,7 +1216,7 @@ __metadata:
     "@vue/cli-plugin-babel": ~4.4.0
     "@vue/cli-plugin-eslint": ~4.4.0
     "@vue/cli-service": ~4.4.0
-    "@vue/composition-api": ^0.6.7
+    "@vue/composition-api": ^1.0.0-beta.10
     "@vue/eslint-config-prettier": ^6.0.0
     babel-eslint: ^10.1.0
     core-js: ^3.6.5
@@ -1619,14 +1619,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vue/composition-api@npm:^0.6.7":
-  version: 0.6.7
-  resolution: "@vue/composition-api@npm:0.6.7"
+"@vue/composition-api@npm:^1.0.0-beta.10":
+  version: 1.0.0-beta.10
+  resolution: "@vue/composition-api@npm:1.0.0-beta.10"
   dependencies:
-    tslib: ^2.0.0
+    tslib: ^2.0.1
   peerDependencies:
-    vue: ^2.5.22
-  checksum: 35713d5da5f3f9990b8ffd8bc9a5f83fb3a50a811bc52bc8c007ebb5a6ac432e59f3061e532eb720131297408c561ae41501bbbcbab613d9cc66796a7b6e51a9
+    vue: ">= 2.5 < 3"
+  checksum: 4f0267f174155d5f56e72011bab6362a421f0fd43b4ee59e4b8fd31f9ab865c780bd9c6714ac2a4b5662ed5c86822967203f9966450d190919bc0742e58eadf1
   languageName: node
   linkType: hard
 
@@ -10280,10 +10280,10 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "tslib@npm:2.0.0"
-  checksum: a7369a224f12e223fb42f2a720389601a24a1e1c96c55bf0d8d4b60c131e574c175ae23578b8d1bd3f4ec790c7e0a82b43733f022f866d48a23aeadd3910755d
+"tslib@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "tslib@npm:2.0.1"
+  checksum: 7b42337a07f536c9650c72471cdf51317f07eb981692e91b8979fee3f6e20136a8f047e6ecdc5f2f3201132a6cc4e0096fa3c58655eba3803bf7fe739ccd088e
   languageName: node
   linkType: hard
 

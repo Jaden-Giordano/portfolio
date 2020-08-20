@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@portfolio/webgl": "workspace:webgl",
-    "@vue/composition-api": "^0.6.7",
+    "@vue/composition-api": "^1.0.0-beta.10",
     "core-js": "^3.6.5",
     "uid": "^1.0.0",
     "vue": "^2.6.11"

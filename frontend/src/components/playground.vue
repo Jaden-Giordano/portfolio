@@ -5,14 +5,25 @@
 </template>
 
 <script>
+  import { ref } from '@vue/composition-api';
   import uid from 'uid';
 
   export default {
-    setup: () => ({
-      height: window.innerHeight,
-      id: uid(8),
-      width: window.innerWidth,
-    }),
+    setup: () => {
+      const width = ref(document.body.innerWidth);
+      const height = ref(document.body.innerHeight);
+
+      window.addEventListener('resize', () => {
+        width.value = document.body.innerWidth;
+        height.value = document.body.innerHeight;
+      });
+
+      return {
+        height,
+        id: uid(8),
+        width,
+      }
+    },
   }
 </script>
 
