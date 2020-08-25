@@ -18,6 +18,10 @@
         height.value = document.body.innerHeight;
       });
 
+      import('@portfolio/webgl').then((folio) => {
+        new folio.FolioClient();
+      });
+
       return {
         height,
         id: uid(8),

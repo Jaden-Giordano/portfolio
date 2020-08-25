@@ -11,7 +11,7 @@ pub fn init_webgl_ctx() -> Result<GL, JsValue> {
     let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
     let gl: GL = canvas.get_context("webgl")?.unwrap().dyn_into()?;
 
-    gl.clear_color(0.0,0.0,0.0,1.0);
+    gl.clear_color(1.0,0.0,0.0,1.0);
 
     Ok(gl)
 }

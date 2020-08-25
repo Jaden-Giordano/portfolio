@@ -1,6 +1,8 @@
 use wasm_bindgen::prelude::*;
 use web_sys::*;
 
+use crate::programs::Rectangle;
+
 type GL = web_sys::WebGlRenderingContext;
 
 mod common_funcs;
@@ -11,13 +13,13 @@ mod shaders;
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
+    pub fn log(s: &str);
 }
 
 #[wasm_bindgen]
 pub struct FolioClient {
     gl: WebGlRenderingContext,
-    program_color_2d: programs::Color2D,
+    program: Rectangle,
 }
 
 #[wasm_bindgen]
@@ -26,10 +28,12 @@ impl FolioClient {
     pub fn new() -> Self {
         console_error_panic_hook::set_once();
         let gl = gl_setup::init_webgl_ctx().unwrap();
+        log("ASDFASD");
+        let program = Rectangle::new(&gl);
 
         Self {
-            program_color_2d: programs::Color2D::new(&gl),
-            gl: gl,
+            gl,
+            program,
         }
     }
 
@@ -40,7 +44,6 @@ impl FolioClient {
     pub fn render(&self) {
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
-        self.program_color_2d
-            .render(&self.gl, 0., 10., 0., 10., 800., 800.)
+        self.program.render(&self.gl, 1.0);
     }
 }
