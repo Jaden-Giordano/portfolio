@@ -12,7 +12,6 @@ pub fn init_webgl_ctx() -> Result<(GL, HtmlCanvasElement), JsValue> {
     let gl: GL = canvas.get_context("webgl")?.unwrap().dyn_into()?;
 
     gl.clear_color(0.0,0.0,0.0,0.0);
-    gl.viewport(0, 0, gl.drawing_buffer_width(), gl.drawing_buffer_height());
 
     Ok((gl, canvas))
 }

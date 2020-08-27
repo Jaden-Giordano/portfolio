@@ -72,7 +72,11 @@ impl Rectangle {
     pub fn render(
         &self,
         gl: &GL,
-        aspect: f32
+        x: f32,
+        y: f32,
+        width: f32,
+        height: f32,
+        color: [f32; 4],
     ) {
         gl.use_program(Some(&self.program));
 
@@ -82,9 +86,9 @@ impl Rectangle {
         gl.vertex_attrib_pointer_with_i32(0, 3, GL::FLOAT, false, 0, 0);
         gl.enable_vertex_attrib_array(0);
 
-        gl.uniform4f(Some(&self.u_color), 1.0, 1.0, 1.0, 1.0);
-        gl.uniform4f(Some(&self.u_scale), 100.0, 100.0, 1.0, 1.0);
-        gl.uniform4f(Some(&self.u_translation), 0.0, 0.0, 0.0, 0.0);
+        gl.uniform4f(Some(&self.u_color), color[0], color[1], color[2], color[3]);
+        gl.uniform4f(Some(&self.u_scale), width, height, 1.0, 1.0);
+        gl.uniform4f(Some(&self.u_translation), x, y, 0.0, 0.0);
 
         gl.draw_elements_with_i32(
             GL::TRIANGLES,
