@@ -19,7 +19,11 @@
       });
 
       import('@portfolio/webgl').then((folio) => {
-        new folio.FolioClient();
+        const client = new folio.FolioClient();
+
+        setInterval(() => {
+          client.render();
+        }, 100);
       });
 
       return {

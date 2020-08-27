@@ -28,7 +28,6 @@ impl FolioClient {
     pub fn new() -> Self {
         console_error_panic_hook::set_once();
         let gl = gl_setup::init_webgl_ctx().unwrap();
-        log("ASDFASD");
         let program = Rectangle::new(&gl);
 
         Self {

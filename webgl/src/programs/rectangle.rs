@@ -34,8 +34,7 @@ impl Rectangle {
             &gl,
             crate::shaders::simple::VERT,
             crate::shaders::simple::FRAG,
-        );
-        let program = program.unwrap();
+        ).unwrap();
 
         let memory_buffer = wasm_bindgen::memory()
             .dyn_into::<WebAssembly::Memory>()
@@ -49,7 +48,7 @@ impl Rectangle {
         gl.bind_buffer(GL::ARRAY_BUFFER, Some(&vertices));
         gl.buffer_data_with_array_buffer_view(GL::ARRAY_BUFFER, &vertex_array, GL::STATIC_DRAW);
 
-        let indices_location = INDICES.as_ptr() as u32;
+        let indices_location = INDICES.as_ptr() as u32 / 2;
         let index_array = Uint16Array::new(&memory_buffer)
             .subarray(indices_location, indices_location + INDICES.len() as u32);
         let indices = gl.create_buffer().ok_or("failed to create index buffer").unwrap();
@@ -78,17 +77,18 @@ impl Rectangle {
         gl.use_program(Some(&self.program));
 
         gl.bind_buffer(GL::ARRAY_BUFFER, Some(&self.vertices));
+        gl.bind_buffer(GL::ELEMENT_ARRAY_BUFFER, Some(&self.indices));
+
         gl.vertex_attrib_pointer_with_i32(0, 3, GL::FLOAT, false, 0, 0);
         gl.enable_vertex_attrib_array(0);
 
         gl.uniform4f(Some(&self.u_color), 1.0, 1.0, 1.0, 1.0);
+        gl.uniform4f(Some(&self.u_scale), 1.0, 1.0 * aspect, 0.5, 1.0);
         gl.uniform4f(Some(&self.u_translation), 0.0, 0.0, 0.0, 0.0);
-
-        gl.bind_buffer(GL::ELEMENT_ARRAY_BUFFER, Some(&self.indices));
 
         gl.draw_elements_with_i32(
             GL::TRIANGLES,
-            6,
+            INDICES.len() as i32,
             GL::UNSIGNED_SHORT,
             0,
         );
