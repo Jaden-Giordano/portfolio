@@ -4,7 +4,7 @@ use web_sys::*;
 
 type GL = web_sys::WebGlRenderingContext;
 
-pub fn init_webgl_ctx() -> Result<GL, JsValue> {
+pub fn init_webgl_ctx() -> Result<(GL, HtmlCanvasElement), JsValue> {
     let win = window().unwrap();
     let doc = win.document().unwrap();
     let canvas = doc.get_element_by_id("canvas").unwrap();
@@ -12,6 +12,7 @@ pub fn init_webgl_ctx() -> Result<GL, JsValue> {
     let gl: GL = canvas.get_context("webgl")?.unwrap().dyn_into()?;
 
     gl.clear_color(0.0,0.0,0.0,0.0);
+    gl.viewport(0, 0, gl.drawing_buffer_width(), gl.drawing_buffer_height());
 
-    Ok(gl)
+    Ok((gl, canvas))
 }

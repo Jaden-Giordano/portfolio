@@ -10,12 +10,12 @@
 
   export default {
     setup: () => {
-      const width = ref(document.body.innerWidth);
-      const height = ref(document.body.innerHeight);
+      const width = ref(document.body.clientWidth);
+      const height = ref(document.body.clientHeight);
 
       window.addEventListener('resize', () => {
-        width.value = document.body.innerWidth;
-        height.value = document.body.innerHeight;
+        width.value = document.body.clientWidth;
+        height.value = document.body.clientHeight;
       });
 
       import('@portfolio/webgl').then((folio) => {

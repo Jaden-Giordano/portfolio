@@ -83,7 +83,7 @@ impl Rectangle {
         gl.enable_vertex_attrib_array(0);
 
         gl.uniform4f(Some(&self.u_color), 1.0, 1.0, 1.0, 1.0);
-        gl.uniform4f(Some(&self.u_scale), 1.0, 1.0 * aspect, 0.5, 1.0);
+        gl.uniform4f(Some(&self.u_scale), 100.0, 100.0, 1.0, 1.0);
         gl.uniform4f(Some(&self.u_translation), 0.0, 0.0, 0.0, 0.0);
 
         gl.draw_elements_with_i32(

@@ -20,6 +20,7 @@ extern "C" {
 pub struct FolioClient {
     gl: WebGlRenderingContext,
     program: Rectangle,
+    canvas: HtmlCanvasElement,
 }
 
 #[wasm_bindgen]
@@ -27,12 +28,13 @@ impl FolioClient {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         console_error_panic_hook::set_once();
-        let gl = gl_setup::init_webgl_ctx().unwrap();
+        let (gl, canvas) = gl_setup::init_webgl_ctx().unwrap();
         let program = Rectangle::new(&gl);
 
         Self {
             gl,
             program,
+            canvas,
         }
     }
 
@@ -43,6 +45,7 @@ impl FolioClient {
     pub fn render(&self) {
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
-        self.program.render(&self.gl, 1.0);
+        let aspect: f32 = self.canvas.width() as f32 / self.canvas.height() as f32;
+        self.program.render(&self.gl, aspect);
     }
 }
