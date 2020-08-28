@@ -30,7 +30,7 @@ impl FolioClient {
     pub fn new() -> Self {
         console_error_panic_hook::set_once();
         let (gl, canvas) = gl_setup::init_webgl_ctx().unwrap();
-        let gol = GoL::new(&gl, 10, 10);
+        let gol = GoL::new(&gl, 160, 160);
 
         Self {
             gl,
