@@ -22,6 +22,7 @@
         const client = new folio.FolioClient();
 
         setInterval(() => {
+          client.update();
           client.render();
         }, 100);
       });

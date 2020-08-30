@@ -15,7 +15,7 @@ impl GoL {
         let mut rng = rand::thread_rng();
 
         for _ in 0..width*height {
-            tiles.push(rng.gen::<f32>() > 0.8);
+            tiles.push(rng.gen::<f32>() > 0.9);
         }
 
         Self {
@@ -29,26 +29,45 @@ impl GoL {
        (index as u32 % self.dimensions.0, index as u32 / self.dimensions.0)
     }
 
-    fn encode(&self, x: u32, y: u32) -> usize {
+    fn encode(&self, x: i32, y: i32) -> usize {
+        // If location is negative loop back to end of corresponding coordinate space.
+        let x = if x < 0 { (self.dimensions.0 as i32 + x) as u32 } else { x as u32 };
+        let y = if y < 0 { (self.dimensions.1 as i32 + y) as u32 } else { y as u32 };
         // Perform a modulo on the length of the tiles vector to loop coordinate space.
         (y * self.dimensions.0 + x) as usize % self.tiles.len() as usize
     }
 
-    pub fn update() {
+    fn get_active_neighbor_count(&self, x: u32, y: u32) -> u32 {
+        let mut count = 0;
+        for horizontal_offset in -1..2 {
+            for vertical_offset in -1..2 {
+                if horizontal_offset == 0 && vertical_offset == 0 { continue }
+                count += self.tiles[self.encode(x as i32 + horizontal_offset, y as i32 + vertical_offset)] as u32;
+            }
+        }
+        count
+    }
+
+    pub fn update(&mut self) {
+        let mut tiles_buffer = self.tiles.clone();
+        for (index, tile) in self.tiles.iter().enumerate() {
+            let (x, y) = self.decode(index);
+            let active_neighbor_count = self.get_active_neighbor_count(x, y);
+            tiles_buffer[index] = active_neighbor_count == 3 || (*tile && active_neighbor_count == 2);
+        }
+        self.tiles = tiles_buffer;
     }
 
     pub fn render(&self, gl: &GL, aspect: f32) {
         for (index, &active) in self.tiles.iter().enumerate() {
             let (col, row) = self.decode(index);
-            let width = 4.0 / self.dimensions.0 as f32 / aspect;
-            let height = 4.0 / self.dimensions.1 as f32;
-            let x: f32 = width * col as f32 - 2.0;
-            let y: f32 = height * row as f32 - 2.0;
+            let width = 2.0 / self.dimensions.0 as f32;
+            let height = 2.0 / self.dimensions.1 as f32;
+            let x: f32 = width * col as f32 - 1.0;
+            let y: f32 = height * row as f32 - 1.0;
             let color: [f32; 4] = if active { [1.0,1.0,1.0,1.0] } else { [0.0,0.0,0.0,0.0] };
             self.renderer.render(gl, x, y, width, height, color);
-            // if active {
-            //     crate::log(&format!("{}, {} | {},{} - {},{}", col, row, x, y, width, height));
-            // }
         }
     }
 }
+
