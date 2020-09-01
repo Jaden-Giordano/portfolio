@@ -65,7 +65,7 @@ impl GoL {
             let height = 2.0 / self.dimensions.1 as f32;
             let x: f32 = width * col as f32 - 1.0;
             let y: f32 = height * row as f32 - 1.0;
-            let color: [f32; 4] = if active { [1.0,1.0,1.0,1.0] } else { [0.0,0.0,0.0,0.0] };
+            let color: [f32; 4] = if active { [115.0 / 256.0,69.0 / 256.0,124.0 / 256.0,1.0] } else { [0.0,0.0,0.0,0.0] };
             self.renderer.render(gl, x, y, width, height, color);
         }
     }

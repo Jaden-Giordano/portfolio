@@ -11,11 +11,11 @@
   export default {
     setup: () => {
       const width = ref(document.body.clientWidth);
-      const height = ref(document.body.clientHeight);
+      const height = ref(document.body.clientHeight - 8);
 
       window.addEventListener('resize', () => {
         width.value = document.body.clientWidth;
-        height.value = document.body.clientHeight;
+        height.value = document.body.clientHeight - 8;
       });
 
       import('@portfolio/webgl').then((folio) => {
@@ -38,6 +38,7 @@
 
 <style lang="scss">
   .playground {
+    box-sizing: border-box;
     height: 100%;
     width: 100%;
   }

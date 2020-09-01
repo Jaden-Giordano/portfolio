@@ -9,6 +9,14 @@
         <span>Design</span>
       </div>
     </div>
+    <template #footer>
+      <span>&copy; Jaden Giordano 2020</span>
+      <div class="contact">
+        <a href="thejadenjack@gmail.com">Email</a>
+        <a href="https://github.com/Jaden-Giordano">Github</a>
+        <a href="https://www.linkedin.com/in/jaden-giordano-93947a17b/">LinkedIn</a>
+      </div>
+    </template>
   </page>
 </template>
 
@@ -23,6 +31,22 @@
 </script>
 
 <style lang="scss">
+  .contact {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+
+    a {
+      color: white !important;
+      margin-right: 0.25rem;
+
+      &:not(:last-child)::after {
+        content: '|';
+        margin-left: 0.25rem;
+      }
+    }
+  }
+
   .home {
     align-items: center;
     display: flex;
