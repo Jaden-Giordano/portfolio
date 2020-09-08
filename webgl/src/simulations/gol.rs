@@ -1,7 +1,7 @@
 use web_sys::WebGlRenderingContext as GL;
 use rand::prelude::*;
 
-use crate::programs::Rectangle;
+use crate::rendering::Rectangle;
 
 pub struct GoL {
     dimensions: (u32, u32),

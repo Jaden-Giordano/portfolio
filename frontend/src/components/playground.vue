@@ -20,11 +20,12 @@
 
       import('@portfolio/webgl').then((folio) => {
         const client = new folio.FolioClient();
-
-        setInterval(() => {
+        const update = () => {
           client.update();
           client.render();
-        }, 100);
+          setTimeout(update, 10)
+        };
+        update();
       });
 
       return {
