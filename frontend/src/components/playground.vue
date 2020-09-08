@@ -5,40 +5,40 @@
 </template>
 
 <script>
-  import { ref } from '@vue/composition-api';
-  import uid from 'uid';
+import { ref } from "@vue/composition-api";
+import uid from "uid";
 
-  export default {
-    setup: () => {
-      const width = ref(document.body.clientWidth);
-      const height = ref(document.body.clientHeight);
+export default {
+  setup: () => {
+    const width = ref(document.body.clientWidth);
+    const height = ref(document.body.clientHeight);
 
-      window.addEventListener('resize', () => {
-        width.value = document.body.clientWidth;
-        height.value = document.body.clientHeight;
-      });
+    window.addEventListener("resize", () => {
+      width.value = document.body.clientWidth;
+      height.value = document.body.clientHeight;
+    });
 
-      import('@portfolio/webgl').then((folio) => {
-        const client = new folio.FolioClient();
+    import("@portfolio/webgl").then((folio) => {
+      const client = new folio.FolioClient();
 
-        setInterval(() => {
-          client.update();
-          client.render();
-        }, 100);
-      });
+      setInterval(() => {
+        client.update();
+        client.render();
+      }, 0.1);
+    });
 
-      return {
-        height,
-        id: uid(8),
-        width,
-      }
-    },
-  }
+    return {
+      height,
+      id: uid(8),
+      width,
+    };
+  },
+};
 </script>
 
 <style lang="scss">
-  .playground {
-    height: 100%;
-    width: 100%;
-  }
+.playground {
+  height: 100%;
+  width: 100%;
+}
 </style>
