@@ -14,6 +14,7 @@ wasm-bindgen = "0.2.64"
 rand = "0.7.3"
 aabb-quadtree = "0.2.0"
 getrandom = { version = "0.1", features = ["wasm-bindgen"] }
+rayon = "1.4.0"
 
 [dependencies.web-sys]
 version = "0.3.4"

@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use web_sys::WebGlRenderingContext as GL;
 
-use crate::programs::Rectangle;
+use crate::rendering::Rectangle;
 
 pub struct GoL {
     dimensions: (u32, u32),
@@ -83,7 +83,7 @@ impl GoL {
             let x: f32 = width * col as f32 - 1.0;
             let y: f32 = height * row as f32 - 1.0;
             let color: [f32; 4] = if active {
-                [1.0, 1.0, 1.0, 1.0]
+                [115.0 / 256.0, 69.0 / 256.0, 124.0 / 256.0, 1.0]
             } else {
                 [0.0, 0.0, 0.0, 0.0]
             };

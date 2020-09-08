@@ -1,16 +1,18 @@
 use wasm_bindgen::prelude::*;
 use web_sys::*;
 
-use crate::simulations::{Flock, GoL};
+use crate::simulations::{FallingSand, Flock, GoL, Simulation};
+// use crate::simulations::GoL;
 
 type GL = web_sys::WebGlRenderingContext;
 
 mod common_funcs;
 mod gl_setup;
-mod programs;
 mod quadtree;
+mod rendering;
 mod shaders;
 mod simulations;
+mod utils;
 
 #[wasm_bindgen]
 extern "C" {
@@ -21,7 +23,7 @@ extern "C" {
 #[wasm_bindgen]
 pub struct FolioClient {
     gl: WebGlRenderingContext,
-    sim: Flock,
+    sim: FallingSand,
     canvas: HtmlCanvasElement,
 }
 
@@ -32,12 +34,14 @@ impl FolioClient {
         console_error_panic_hook::set_once();
         let (gl, canvas) = gl_setup::init_webgl_ctx().unwrap();
         //let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
-        let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
+        //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
+        // let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
+        let falling_sand = FallingSand::new(&gl, canvas.width() / 5, canvas.height() / 5);
 
         Self {
             gl,
             canvas,
-            sim: flock,
+            sim: falling_sand,
         }
     }
 
@@ -55,7 +59,6 @@ impl FolioClient {
         );
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
-        let aspect: f32 = self.canvas.width() as f32 / self.canvas.height() as f32;
-        self.sim.render(&self.gl, aspect);
+        self.sim.render(&self.gl);
     }
 }

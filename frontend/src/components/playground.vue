@@ -11,20 +11,21 @@ import uid from "uid";
 export default {
   setup: () => {
     const width = ref(document.body.clientWidth);
-    const height = ref(document.body.clientHeight);
+    const height = ref(document.body.clientHeight - 8);
 
     window.addEventListener("resize", () => {
       width.value = document.body.clientWidth;
-      height.value = document.body.clientHeight;
+      height.value = document.body.clientHeight - 8;
     });
 
     import("@portfolio/webgl").then((folio) => {
       const client = new folio.FolioClient();
-
-      setInterval(() => {
+      const update = () => {
         client.update();
         client.render();
-      }, 0.1);
+        setTimeout(update, 10);
+      };
+      update();
     });
 
     return {
@@ -38,6 +39,7 @@ export default {
 
 <style lang="scss">
 .playground {
+  box-sizing: border-box;
   height: 100%;
   width: 100%;
 }
