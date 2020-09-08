@@ -12,7 +12,6 @@ console_error_panic_hook = "0.1.6"
 js-sys = "0.3.41"
 wasm-bindgen = "0.2.64"
 rand = "0.7.3"
-aabb-quadtree = "0.2.0"
 getrandom = { version = "0.1", features = ["wasm-bindgen"] }
 rayon = "1.4.0"
 
