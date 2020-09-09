@@ -13,10 +13,10 @@
       const height = ref(document.body.clientHeight - 8);
       const canvas = ref(null);
 
-      window.addEventListener('resize', () => {
-        width.value = document.body.clientWidth;
-        height.value = document.body.clientHeight - 8;
-      });
+    window.addEventListener("resize", () => {
+      width.value = document.body.clientWidth;
+      height.value = document.body.clientHeight - 8;
+    });
 
       const worker = new Worker('../playground-worker.js', { type: 'module' });
 
@@ -35,9 +35,9 @@
 </script>
 
 <style lang="scss">
-  .playground {
-    box-sizing: border-box;
-    height: 100%;
-    width: 100%;
-  }
+.playground {
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
 </style>

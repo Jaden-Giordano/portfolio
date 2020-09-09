@@ -1,13 +1,14 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{OffscreenCanvas, WebGlRenderingContext};
 
+use crate::simulations::{FallingSand, Flock, GoL, Simulation};
 // use crate::simulations::GoL;
-use crate::simulations::{FallingSand, Simulation};
 
 type GL = web_sys::WebGlRenderingContext;
 
 mod common_funcs;
 mod gl_setup;
+mod quadtree;
 mod rendering;
 mod shaders;
 mod simulations;
@@ -33,6 +34,7 @@ impl FolioClient {
         console_error_panic_hook::set_once();
         let gl = gl_setup::init_webgl_ctx(&canvas).unwrap();
         // let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
+        //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
         let falling_sand = FallingSand::new(&gl, canvas.width() / 7, canvas.height() / 7);
 
         Self {
@@ -43,12 +45,17 @@ impl FolioClient {
     }
 
     pub fn update(&mut self, _time: f32, _height: f32, _width: f32) -> Result<(), JsValue> {
-        self.sim.update();
+        //self.sim.update();
         Ok(())
     }
 
     pub fn render(&self) {
-        self.gl.viewport(0, 0, self.gl.drawing_buffer_width(), self.gl.drawing_buffer_height());
+        self.gl.viewport(
+            0,
+            0,
+            self.gl.drawing_buffer_width(),
+            self.gl.drawing_buffer_height(),
+        );
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
         self.sim.render(&self.gl);
