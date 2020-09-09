@@ -24,22 +24,21 @@ extern "C" {
 pub struct FolioClient {
     gl: WebGlRenderingContext,
     sim: FallingSand,
-    canvas: OffscreenCanvas,
 }
 
 #[wasm_bindgen]
 impl FolioClient {
     #[wasm_bindgen(constructor)]
-    pub fn new(canvas: OffscreenCanvas) -> Self {
+    pub fn new(gl: WebGlRenderingContext) -> Self {
         console_error_panic_hook::set_once();
-        let gl = gl_setup::init_webgl_ctx(&canvas).unwrap();
+        let width = gl.drawing_buffer_width();
+        let height = gl.drawing_buffer_height();
         // let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
         //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
-        let falling_sand = FallingSand::new(&gl, canvas.width() / 5, canvas.height() / 5);
+        let falling_sand = FallingSand::new(&gl, width as u32 / 5, height as u32 / 5);
 
         Self {
             gl,
-            canvas,
             sim: falling_sand,
         }
     }
@@ -59,7 +58,5 @@ impl FolioClient {
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
         self.sim.render(&self.gl);
-
-        crate::log("RENDER");
     }
 }

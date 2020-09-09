@@ -63,6 +63,7 @@ pub struct FallingSand {
     dimensions: (u32, u32),
     tiles: TileStorage,
     renderer: Rectangle,
+    random: ThreadRng,
 }
 
 impl FallingSand {
@@ -83,6 +84,7 @@ impl FallingSand {
             dimensions: (width, height),
             tiles,
             renderer: Rectangle::new(&gl),
+            random: rng,
         }
     }
 }
@@ -93,9 +95,20 @@ impl Simulation for FallingSand {
             if raw_tile.get() & TILE_FLAG > 0 {
                 let (x, y, tile) = from_raw(raw_tile.get());
                 let below = self.tiles.get(x as i32, y as i32 - 1);
-                if below == None && y > 0 {
-                    self.tiles.swap((x, y), (x as i32, y as i32 - 1));
-                    raw_tile.replace(into_raw(x, y - 1, tile));
+                if y > 0 {
+                    if below == None {
+                        self.tiles.swap((x, y), (x as i32, y as i32 - 1));
+                        raw_tile.set(into_raw(x, y - 1, tile));
+                    } else {
+                        let direction = if self.random.gen::<f32>() > 0.5 { -1 } else { 1 };
+                        let below = self.tiles.get(x as i32 + direction, y as i32 - 1);
+                        if below == None {
+                            if (direction < 0 && x > 0) || (direction > 0 && x < self.dimensions.0 as u16 - 1) {
+                                self.tiles.swap((x, y), (x as i32 + direction, y as i32 - 1));
+                                raw_tile.set(into_raw((x as i32 + direction) as u16, y - 1, tile));
+                            }
+                        }
+                    }
                 }
             }
         }

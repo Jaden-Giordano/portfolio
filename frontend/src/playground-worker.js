@@ -1,6 +1,7 @@
 onmessage = (event) => {
   import('@portfolio/webgl').then(module => {
-    const client = new module.FolioClient(event.data.canvas);
+    const gl = event.data.canvas.getContext('webgl');
+    const client = new module.FolioClient(gl);
 
     const render = () => {
       client.update();

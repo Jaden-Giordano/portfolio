@@ -18,11 +18,25 @@
       height.value = document.body.clientHeight - 8;
     });
 
-      const worker = new Worker('../playground-worker.js', { type: 'module' });
-
       onMounted(async () => {
-        const offscreen = canvas.value.transferControlToOffscreen();
-        worker.postMessage({ message: 'LOAD', canvas: offscreen }, [offscreen]);
+        // Use OffscreenCanvas if browser supports it.
+        if (canvas.value.transferControlToOffscreen) {
+          const worker = new Worker('../playground-worker.js', { type: 'module' });
+          const offscreen = canvas.value.transferControlToOffscreen();
+          worker.postMessage({ message: 'LOAD', canvas: offscreen }, [offscreen]);
+        } else {
+          import('@portfolio/webgl').then(module => {
+            const gl = canvas.value.getContext('webgl');
+            const client = new module.FolioClient(gl);
+
+            const render = () => {
+              client.update();
+              client.render();
+              requestAnimationFrame(render);
+            };
+            requestAnimationFrame(render);
+          });
+        }
       });
 
       return {
