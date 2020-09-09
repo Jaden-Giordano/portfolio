@@ -1,8 +1,7 @@
 use rand::prelude::*;
 use web_sys::WebGlRenderingContext as GL;
 
-use crate::programs::Rectangle;
-use crate::programs::Triangle;
+use crate::rendering::Triangle;
 use crate::quadtree::Quadtree;
 use crate::quadtree::Rectangle as Rect;
 

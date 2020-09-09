@@ -94,5 +94,5 @@ impl Quadtree {
         self.divided = true;
     }
 
-    pub fn insert() -> bool {}
+    // pub fn insert() -> bool {}
 }

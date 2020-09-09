@@ -35,7 +35,7 @@ impl FolioClient {
         let gl = gl_setup::init_webgl_ctx(&canvas).unwrap();
         // let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
         //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
-        let falling_sand = FallingSand::new(&gl, canvas.width() / 7, canvas.height() / 7);
+        let falling_sand = FallingSand::new(&gl, canvas.width() / 5, canvas.height() / 5);
 
         Self {
             gl,
@@ -45,7 +45,7 @@ impl FolioClient {
     }
 
     pub fn update(&mut self, _time: f32, _height: f32, _width: f32) -> Result<(), JsValue> {
-        //self.sim.update();
+        self.sim.update();
         Ok(())
     }
 
