@@ -4,11 +4,11 @@ import App from "./App.vue";
 
 import './style.scss';
 
-import('@portfolio/webgl');
-
 Vue.config.productionTip = false;
 
 Vue.use(VueCompositionApi);
+
+const worker = new Worker('./playground-worker.js', { type: 'module' });
 
 new Vue({
   render: h => h(App)

@@ -23,6 +23,7 @@ features = [
   'EventTarget',
   'HtmlCanvasElement',
   'MouseEvent',
+  'OffscreenCanvas',
   'WebGlBuffer',
   'WebGlRenderingContext',
   'WebGlUniformLocation',

@@ -1230,6 +1230,7 @@ __metadata:
     vue: ^2.6.11
     vue-template-compiler: ^2.6.11
     webpack: ^4.43.0
+    worker-plugin: ^5.0.0
   languageName: unknown
   linkType: soft
 
@@ -11013,6 +11014,17 @@ fsevents@~2.1.2:
   dependencies:
     errno: ~0.1.7
   checksum: ef76a6892bdf6a4231e6d657c13e2e960278535915d6235d9e0e3e23b65da94a56e5bed17ac5fda282370601d4cd18f4cba9552aa52f4fa9a25cc9fd3fcf58a9
+  languageName: node
+  linkType: hard
+
+"worker-plugin@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "worker-plugin@npm:5.0.0"
+  dependencies:
+    loader-utils: ^1.1.0
+  peerDependencies:
+    webpack: ">= 4"
+  checksum: f10b6540bf9d0211e049e53cdcf847174ed189e746a7839fc05854bb7f978a7969c7438eac985aade38a410bedb7337a50729e63d42b4a349180a75d4a411495
   languageName: node
   linkType: hard
 

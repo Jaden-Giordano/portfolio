@@ -1,5 +1,6 @@
 use web_sys::WebGlRenderingContext as GL;
 use rand::prelude::*;
+use rayon::prelude::*;
 
 use crate::{
     rendering::Rectangle,
@@ -33,17 +34,15 @@ impl FallingSand {
 }
 
 impl Simulation for FallingSand {
-    fn start(&mut self) {
-
-    }
-
     fn update(&mut self) {
         for index in 0..self.dimensions.0*self.dimensions.1 {
-            let (x, y) = self.encoder.decode(index as usize);
-            if let Some(below) = self.encoder.encode(x as i32, y as i32 - 1) {
-                if self.tiles[below] == 0 {
-                    self.tiles[below] = self.tiles[index as usize];
-                    self.tiles[index as usize] = 0;
+            if self.tiles[index as usize] == 1 {
+                let (x, y) = self.encoder.decode(index as usize);
+                if let Some(below) = self.encoder.encode(x as i32, y as i32 - 1) {
+                    if self.tiles[below] == 0 {
+                        self.tiles[below] = self.tiles[index as usize];
+                        self.tiles[index as usize] = 0;
+                    }
                 }
             }
         }

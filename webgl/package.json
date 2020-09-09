@@ -11,5 +11,8 @@
     "build": "wasm-pack build"
   },
   "main": "pkg/webgl.js",
+  "files": [
+    "pkg/*"
+  ],
   "private": true
 }

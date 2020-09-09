@@ -1,17 +1,12 @@
-use wasm_bindgen::JsCast;
-use wasm_bindgen::JsValue;
-use web_sys::*;
+use wasm_bindgen::{JsCast, JsValue};
+use web_sys::OffscreenCanvas;
 
 type GL = web_sys::WebGlRenderingContext;
 
-pub fn init_webgl_ctx() -> Result<(GL, HtmlCanvasElement), JsValue> {
-    let win = window().unwrap();
-    let doc = win.document().unwrap();
-    let canvas = doc.get_element_by_id("canvas").unwrap();
-    let canvas: web_sys::HtmlCanvasElement = canvas.dyn_into::<web_sys::HtmlCanvasElement>()?;
+pub fn init_webgl_ctx(canvas: &OffscreenCanvas) -> Result<GL, JsValue> {
     let gl: GL = canvas.get_context("webgl")?.unwrap().dyn_into()?;
 
     gl.clear_color(0.0,0.0,0.0,0.0);
 
-    Ok((gl, canvas))
+    Ok(gl)
 }

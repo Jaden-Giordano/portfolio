@@ -1,5 +1,5 @@
 use wasm_bindgen::prelude::*;
-use web_sys::*;
+use web_sys::{OffscreenCanvas, WebGlRenderingContext};
 
 // use crate::simulations::GoL;
 use crate::simulations::{FallingSand, Simulation};
@@ -23,17 +23,17 @@ extern "C" {
 pub struct FolioClient {
     gl: WebGlRenderingContext,
     sim: FallingSand,
-    canvas: HtmlCanvasElement,
+    canvas: OffscreenCanvas,
 }
 
 #[wasm_bindgen]
 impl FolioClient {
     #[wasm_bindgen(constructor)]
-    pub fn new() -> Self {
+    pub fn new(canvas: OffscreenCanvas) -> Self {
         console_error_panic_hook::set_once();
-        let (gl, canvas) = gl_setup::init_webgl_ctx().unwrap();
+        let gl = gl_setup::init_webgl_ctx(&canvas).unwrap();
         // let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
-        let falling_sand = FallingSand::new(&gl, canvas.width() / 5, canvas.height() / 5);
+        let falling_sand = FallingSand::new(&gl, canvas.width() / 7, canvas.height() / 7);
 
         Self {
             gl,
@@ -52,5 +52,7 @@ impl FolioClient {
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
         self.sim.render(&self.gl);
+
+        crate::log("RENDER");
     }
 }

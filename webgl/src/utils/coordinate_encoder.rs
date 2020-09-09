@@ -29,6 +29,14 @@ impl CoordinateEncoder for LoopingEncoder {
     }
 }
 
+impl Clone for LoopingEncoder {
+    fn clone(&self) -> LoopingEncoder {
+        LoopingEncoder {
+            dimensions: self.dimensions,
+        }
+    }
+}
+
 pub struct FlatEncoder {
     pub dimensions: (u32, u32),
 }
@@ -43,6 +51,14 @@ impl CoordinateEncoder for FlatEncoder {
             Some((y as u32 * self.dimensions.0 + x as u32) as usize)
         } else {
             None
+        }
+    }
+}
+
+impl Clone for FlatEncoder {
+    fn clone(&self) -> FlatEncoder {
+        FlatEncoder {
+            dimensions: self.dimensions,
         }
     }
 }
