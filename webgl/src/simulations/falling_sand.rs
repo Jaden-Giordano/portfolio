@@ -12,22 +12,29 @@ const X_FLAG: u32    = 0xFFF00000;
 const Y_FLAG: u32    = 0x000FFF00;
 const TILE_FLAG: u32 = 0x000000FF;
 
+#[derive(Clone, Copy)]
+struct Tile {
+    x: u32,
+    y: u32,
+    id: u8,
+}
+
 struct TileStorage {
     encoder: FlatEncoder,
-    pub tiles: Vec<Cell<u32>>,
-    tilemap: Vec<Cell<i32>>,
+    pub tiles: Vec<Cell<Tile>>,
+    tilemap: Vec<Cell<Option<usize>>>,
 }
 
 impl TileStorage {
     pub fn new(width: u32, height: u32) -> Self {
         TileStorage {
             encoder: FlatEncoder { dimensions: (width, height) },
-            tiles: Vec::<Cell<u32>>::new(),
-            tilemap: vec![Cell::<i32>::new(-1); (width * height) as usize],
+            tiles: Vec::<Cell<Tile>>::new(),
+            tilemap: vec![Cell::<Option<usize>>::new(None); (width * height) as usize],
         }
     }
 
-    pub fn get(&self, x: i32, y: i32) -> Option<&Cell<u32>> {
+    pub fn get(&self, x: i32, y: i32) -> Option<&Cell<Tile>> {
         let mut result = None;
         if let Some(tile_index) = self.get_index(x, y) {
             result = Some(&self.tiles[tile_index as usize]);
@@ -38,23 +45,26 @@ impl TileStorage {
     fn get_index(&self, x: i32, y: i32) -> Option<usize> {
         let mut result = None;
         if let Some(map_index) = self.encoder.encode(x, y) {
-            let tile_index = self.tilemap[map_index].get();
-            result = if tile_index >= 0 { Some(tile_index as usize) } else { None };
+            result = self.tilemap[map_index].get();
         }
         result
     }
 
-    pub fn insert(&mut self, raw_tile: u32) {
-        let (x, y, _tile) = from_raw(raw_tile);
-        self.tilemap[self.encoder.encode(x as i32, y as i32).unwrap()].replace(self.tiles.len() as i32);
-        self.tiles.push(Cell::<u32>::new(raw_tile));
+    pub fn insert(&mut self, tile: Tile) {
+        self.tilemap[self.encoder.encode(tile.x as i32, tile.y as i32).unwrap()].replace(Some(self.tiles.len()));
+        self.tiles.push(Cell::<Tile>::new(tile));
     }
 
-    pub fn swap(&self, old_coords: (u16, u16), new_coords: (i32, i32)) {
+    pub fn swap(&self, tile: &Cell<Tile>, old_coords: (u32, u32), new_coords: (i32, i32)) {
         let old_index = self.encoder.encode(old_coords.0 as i32, old_coords.1 as i32).unwrap();
         // Only swap if new location is valid.
         if let Some(new_index) = self.encoder.encode(new_coords.0, new_coords.1) {
             self.tilemap[old_index].swap(&self.tilemap[new_index]);
+            tile.set(Tile { x: new_coords.0 as u32, y: new_coords.1 as u32, id: tile.get().id });
+            // Update the coordinates of the swapped tile if its an actual tile.
+            if let Some(old_tile) = self.get(old_coords.0 as i32, old_coords.1 as i32) {
+                old_tile.set(Tile { x: old_coords.0, y: old_coords.1, id: old_tile.get().id });
+            }
         }
     }
 }
@@ -73,9 +83,18 @@ impl FallingSand {
         let encoder = FlatEncoder { dimensions: (width, height) };
 
         for index in 0..width*height {
-            if rng.gen::<f32>() > 0.9 {
+            let weight = rng.gen::<f32>();
+            let tile_id = if weight > 0.9 {
+                1
+            } else if weight <= 0.9 && weight > 0.8 {
+                2
+            } else {
+                0
+            };
+
+            if tile_id != 0 {
                 let (x, y) = encoder.decode(index as usize);
-                let tile = into_raw(x as u16, y as u16, 1);
+                let tile = Tile { x, y, id: tile_id };
                 tiles.insert(tile);
             }
         }
@@ -92,22 +111,35 @@ impl FallingSand {
 impl Simulation for FallingSand {
     fn update(&mut self) {
         for raw_tile in self.tiles.tiles.iter() {
-            if raw_tile.get() & TILE_FLAG > 0 {
-                let (x, y, tile) = from_raw(raw_tile.get());
-                let below = self.tiles.get(x as i32, y as i32 - 1);
-                if y > 0 {
-                    if below == None {
-                        self.tiles.swap((x, y), (x as i32, y as i32 - 1));
-                        raw_tile.set(into_raw(x, y - 1, tile));
-                    } else {
-                        let direction = if self.random.gen::<f32>() > 0.5 { -1 } else { 1 };
-                        let below = self.tiles.get(x as i32 + direction, y as i32 - 1);
-                        if below == None {
-                            if (direction < 0 && x > 0) || (direction > 0 && x < self.dimensions.0 as u16 - 1) {
-                                self.tiles.swap((x, y), (x as i32 + direction, y as i32 - 1));
-                                raw_tile.set(into_raw((x as i32 + direction) as u16, y - 1, tile));
+            let tile = raw_tile.get();
+            if tile.y > 0 {
+                if tile.id == 1 {
+                    if let Some(below) = self.tiles.get(tile.x as i32, tile.y as i32 - 1) {
+                        if below.get().id == 2 {
+                            self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32, tile.y as i32 - 1));
+                        } else {
+                            let direction = if self.random.gen::<f32>() > 0.5 { -1 } else { 1 };
+                            if let Some(below) = self.tiles.get(tile.x as i32 + direction, tile.y as i32 - 1) {
+                                if below.get().id == 2 {
+                                    self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32 + direction, tile.y as i32 - 1));
+                                }
+                            } else {
+                                self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32 + direction, tile.y as i32 - 1));
                             }
                         }
+                    } else {
+                        self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32, tile.y as i32 - 1));
+                    }
+                } else if tile.id == 2 {
+                    if self.tiles.get(tile.x as i32, tile.y as i32 - 1).is_some() {
+                        let direction = if self.random.gen::<f32>() > 0.5 { -1 } else { 1 };
+                        if self.tiles.get(tile.x as i32 + direction, tile.y as i32).is_none() {
+                            if (direction < 0 && tile.x > 0) || (direction > 0 && tile.x < self.dimensions.0 - 1) {
+                                self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32 + direction, tile.y as i32));
+                            }
+                        }
+                    } else {
+                        self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32, tile.y as i32 - 1));
                     }
                 }
             }
@@ -116,28 +148,19 @@ impl Simulation for FallingSand {
 
     fn render(&self, gl: &GL) {
         for tile in &self.tiles.tiles {
-            let (x, y, tile) = from_raw(tile.get());
+            let tile = tile.get();
             let width = 2.0 / self.dimensions.0 as f32;
             let height = 2.0 / self.dimensions.1 as f32;
-            let x: f32 = width * x as f32 - 1.0;
-            let y: f32 = height * y as f32 - 1.0;
-            let color: [f32; 4] = if tile == 1 {
+            let x: f32 = width * tile.x as f32 - 1.0;
+            let y: f32 = height * tile.y as f32 - 1.0;
+            let color: [f32; 4] = if tile.id == 1 {
                 [237.0 / 256.0, 201.0 / 256.0, 175.0 / 256.0, 1.0]
+            } else if tile.id == 2 {
+                [0.0, 0.41, 0.58, 1.0]
             } else {
                 [0.0,0.0,0.0,0.0]
             };
             self.renderer.render(gl, x, y, width, height, color);
         }
     }
-}
-
-fn from_raw(data: u32) -> (u16, u16, u8) {
-    let x = ((data & X_FLAG) >> 20) as u16;
-    let y = ((data & Y_FLAG) >> 8) as u16;
-    let tile = (data & TILE_FLAG) as u8;
-    (x, y, tile)
-}
-
-fn into_raw(x: u16, y: u16, tile: u8) -> u32 {
-    ((x as u32) << 20) + ((y as u32) << 8) + tile as u32
 }
