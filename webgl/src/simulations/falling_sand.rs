@@ -74,6 +74,7 @@ pub struct FallingSand {
     tiles: TileStorage,
     renderer: Rectangle,
     random: ThreadRng,
+    spawn_count: u32,
 }
 
 impl FallingSand {
@@ -86,8 +87,6 @@ impl FallingSand {
             let weight = rng.gen::<f32>();
             let tile_id = if weight > 0.9 {
                 1
-            } else if weight <= 0.9 && weight > 0.8 {
-                2
             } else {
                 0
             };
@@ -104,12 +103,22 @@ impl FallingSand {
             tiles,
             renderer: Rectangle::new(&gl),
             random: rng,
+            spawn_count: 0,
         }
     }
 }
 
 impl Simulation for FallingSand {
     fn update(&mut self) {
+        if self.spawn_count < 1000 {
+            self.spawn_count += 1;
+            for point in 0..20 {
+                if self.random.gen::<f32>() > 0.75 {
+                    self.tiles.insert(Tile { x: point + 4, y: self.dimensions.1 - 1, id: 2 })
+                }
+            }
+        }
+
         for raw_tile in self.tiles.tiles.iter() {
             let tile = raw_tile.get();
             if tile.y > 0 {
@@ -136,6 +145,10 @@ impl Simulation for FallingSand {
                         if self.tiles.get(tile.x as i32 + direction, tile.y as i32).is_none() {
                             if (direction < 0 && tile.x > 0) || (direction > 0 && tile.x < self.dimensions.0 - 1) {
                                 self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32 + direction, tile.y as i32));
+                            }
+                        } else if self.tiles.get(tile.x as i32 - direction, tile.y as i32).is_none() {
+                            if (-direction < 0 && tile.x > 0) || (-direction > 0 && tile.x < self.dimensions.0 - 1) {
+                                self.tiles.swap(raw_tile, (tile.x, tile.y), (tile.x as i32 - direction, tile.y as i32));
                             }
                         }
                     } else {
