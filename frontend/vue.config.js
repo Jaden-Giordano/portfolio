@@ -3,7 +3,11 @@ const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
   configureWebpack: {
-    plugins: [new CompressionPlugin()],
+    plugins: [
+      new CompressionPlugin({
+        deleteOriginalAssets: true,
+      }),
+    ],
   },
   lintOnSave: false,
   chainWebpack: (config) => {
