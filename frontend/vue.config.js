@@ -6,6 +6,7 @@ module.exports = {
     plugins: [
       new CompressionPlugin({
         deleteOriginalAssets: true,
+        exclude: "index.html",
       }),
     ],
   },
