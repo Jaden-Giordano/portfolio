@@ -13,16 +13,17 @@
       const height = ref(document.body.clientHeight - 8);
       const canvas = ref(null);
 
-    window.addEventListener("resize", () => {
-      width.value = document.body.clientWidth;
-      height.value = document.body.clientHeight - 8;
-    });
+      window.addEventListener("resize", () => {
+        width.value = document.body.clientWidth;
+        height.value = document.body.clientHeight - 8;
+      });
 
       onMounted(async () => {
         // Use OffscreenCanvas if browser supports it.
         if (canvas.value.transferControlToOffscreen) {
           const worker = new Worker('../playground-worker.js', { type: 'module' });
           const offscreen = canvas.value.transferControlToOffscreen();
+          // Pass the OffscreenCanvas to the web worker.
           worker.postMessage({ message: 'LOAD', canvas: offscreen }, [offscreen]);
         } else {
           import('@portfolio/webgl').then(module => {
