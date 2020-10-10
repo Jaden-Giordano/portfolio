@@ -13,7 +13,7 @@
     "frontend"
   ],
   "scripts": {
-    "serve": "yarn workspace @portfolio/frontend serve",
+    "serve": "yarn workspace @portfolio/webgl build && yarn workspace @portfolio/frontend serve",
     "build": "yarn workspaces foreach run build"
   }
 }

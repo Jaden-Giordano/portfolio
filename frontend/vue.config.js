@@ -1,17 +1,9 @@
 const WorkerPlugin = require("worker-plugin");
-const ExtraWatchWebpackPlugin = require("extra-watch-webpack-plugin");
-const WebpackShellPlugin = require("webpack-shell-plugin");
+const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
   configureWebpack: {
-    plugins: [
-      new ExtraWatchWebpackPlugin({
-        dirs: ["../webgl/src"],
-      }),
-      new WebpackShellPlugin({
-        onBuildStart: ["yarn workspace @portfolio/webgl build"],
-      }),
-    ],
+    plugins: [new CompressionPlugin()],
   },
   lintOnSave: false,
   chainWebpack: (config) => {

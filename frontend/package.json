@@ -11,10 +11,8 @@
     "@portfolio/webgl": "workspace:webgl",
     "@vue/composition-api": "^1.0.0-beta.10",
     "core-js": "^3.6.5",
-    "extra-watch-webpack-plugin": "^1.0.3",
     "uid": "^1.0.0",
-    "vue": "^2.6.11",
-    "webpack-shell-plugin": "^0.5.0"
+    "vue": "^2.6.11"
   },
   "devDependencies": {
     "@vue/babel-preset-app": "^4.4.6",
@@ -23,6 +21,7 @@
     "@vue/cli-service": "~4.4.0",
     "@vue/eslint-config-prettier": "^6.0.0",
     "babel-eslint": "^10.1.0",
+    "compression-webpack-plugin": "^6.0.3",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.3",
     "eslint-plugin-vue": "^6.2.2",
