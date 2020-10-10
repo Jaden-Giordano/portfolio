@@ -2,14 +2,6 @@ const WorkerPlugin = require("worker-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 
 module.exports = {
-  configureWebpack: {
-    plugins: [
-      new CompressionPlugin({
-        deleteOriginalAssets: true,
-        exclude: "index.html",
-      }),
-    ],
-  },
   lintOnSave: false,
   chainWebpack: (config) => {
     config

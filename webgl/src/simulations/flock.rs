@@ -3,6 +3,7 @@ use web_sys::WebGlRenderingContext as GL;
 
 use crate::quadtree::Quadtree;
 use crate::quadtree::Rectangle as Rect;
+use crate::rendering::Rectangle;
 use crate::rendering::Triangle;
 
 #[derive(Debug)]
@@ -22,6 +23,7 @@ pub struct Flock {
     boids: Vec<Boid>,
     triangle: Triangle,
     quadtree: Quadtree,
+    line: Rectangle,
 }
 
 impl Flock {
@@ -65,6 +67,7 @@ impl Flock {
             triangle: Triangle::new(&gl, boidshape),
             boids,
             quadtree: qt,
+            line: Rectangle::new(&gl),
         }
     }
 
@@ -81,6 +84,6 @@ impl Flock {
                 [1.0, 1.0, 1.0, 1.0],
             )
         }
-        self.quadtree.renderroot(&gl);
+        self.quadtree.renderroot(&gl, &self.line);
     }
 }

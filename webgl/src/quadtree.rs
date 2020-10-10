@@ -49,7 +49,6 @@ impl Rectangle {
         return false;
     }
 }
-#[derive(Debug, Clone)]
 pub struct Quadtree {
     rectangle: Rectangle,
     capacity: i16,
@@ -158,8 +157,7 @@ impl Quadtree {
         }
     }
 
-    pub fn renderroot(&self, gl: &GL) {
-        let line = drawableRect::new(&gl);
+    pub fn renderroot(&self, gl: &GL, line: &drawableRect) {
         let color = [0.5, 0.5, 0.5, 1.0];
 
         line.render(
@@ -199,15 +197,26 @@ impl Quadtree {
         );
 
         if self.divided {
-            self.nw.as_ref().unwrap().renderchild(&gl, (true, true));
-            self.ne.as_ref().unwrap().renderchild(&gl, (true, false));
-            self.se.as_ref().unwrap().renderchild(&gl, (false, false));
-            self.sw.as_ref().unwrap().renderchild(&gl, (false, true));
+            self.nw
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (true, true), &line);
+            self.ne
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (true, false), &line);
+            self.se
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (false, false), &line);
+            self.sw
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (false, true), &line);
         }
     }
 
-    pub fn renderchild(&self, gl: &GL, dir: (bool, bool)) {
-        let line = drawableRect::new(&gl);
+    pub fn renderchild(&self, gl: &GL, dir: (bool, bool), line: &drawableRect) {
         let color = [0.5, 0.5, 0.5, 1.0];
 
         if dir.0 && dir.1 {
@@ -251,10 +260,22 @@ impl Quadtree {
         }
 
         if self.divided {
-            self.nw.as_ref().unwrap().renderchild(&gl, (true, true));
-            self.ne.as_ref().unwrap().renderchild(&gl, (true, false));
-            self.se.as_ref().unwrap().renderchild(&gl, (false, false));
-            self.sw.as_ref().unwrap().renderchild(&gl, (false, true));
+            self.nw
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (true, true), &line);
+            self.ne
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (true, false), &line);
+            self.se
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (false, false), &line);
+            self.sw
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (false, true), &line);
         }
     }
 }
