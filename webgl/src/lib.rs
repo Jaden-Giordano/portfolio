@@ -1,7 +1,7 @@
 use wasm_bindgen::prelude::*;
 use web_sys::{OffscreenCanvas, WebGlRenderingContext};
 
-use crate::simulations::{FallingSand, Flock, GoL, Simulation};
+use crate::simulations::{Boid, FallingSand, Flock, GoL, Simulation};
 // use crate::simulations::GoL;
 
 type GL = web_sys::WebGlRenderingContext;
@@ -23,7 +23,8 @@ extern "C" {
 #[wasm_bindgen]
 pub struct FolioClient {
     gl: WebGlRenderingContext,
-    sim: FallingSand,
+    //sim:  FallingSand,
+    sim: Flock,
 }
 
 #[wasm_bindgen]
@@ -35,12 +36,20 @@ impl FolioClient {
         let height = gl.drawing_buffer_height();
         // let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
         //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
-        let falling_sand = FallingSand::new(&gl, width as u32 / 5, height as u32 / 5);
+        //let falling_sand = FallingSand::new(&gl, width as u32 / 5, height as u32 / 5);
+        let flock = Flock::new(&gl, width as u32 / 5, height as u32 / 5);
 
-        Self {
-            gl,
-            sim: falling_sand,
-        }
+        let mut qt = quadtree::Quadtree::new(
+            4,
+            quadtree::Rectangle {
+                x: -1.0,
+                y: 1.0,
+                width: 2.0,
+                height: 2.0,
+            },
+        );
+
+        Self { gl, sim: flock }
     }
 
     pub fn update(&mut self, _time: f32, _height: f32, _width: f32) -> Result<(), JsValue> {

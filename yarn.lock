@@ -1223,6 +1223,7 @@ __metadata:
     eslint: ^6.7.2
     eslint-plugin-prettier: ^3.1.3
     eslint-plugin-vue: ^6.2.2
+    extra-watch-webpack-plugin: ^1.0.3
     prettier: ^1.19.1
     sass: ^1.26.5
     sass-loader: ^8.0.2
@@ -1230,6 +1231,7 @@ __metadata:
     vue: ^2.6.11
     vue-template-compiler: ^2.6.11
     webpack: ^4.43.0
+    webpack-shell-plugin: ^0.5.0
     worker-plugin: ^5.0.0
   languageName: unknown
   linkType: soft
@@ -1237,6 +1239,8 @@ __metadata:
 "@portfolio/main@workspace:.":
   version: 0.0.0-use.local
   resolution: "@portfolio/main@workspace:."
+  dependencies:
+    webpack-shell-plugin: ^0.5.0
   languageName: unknown
   linkType: soft
 
@@ -4709,6 +4713,18 @@ __metadata:
     snapdragon: ^0.8.1
     to-regex: ^3.0.1
   checksum: ce23be772ff536976902aa0193a6d167abad229ca40fb4c1de2fd71c0116eeae168a02f6508d41382eb918fcbafb66dba61d498754051964a167c98210c62b28
+  languageName: node
+  linkType: hard
+
+"extra-watch-webpack-plugin@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "extra-watch-webpack-plugin@npm:1.0.3"
+  dependencies:
+    glob: ^7.1.2
+    is-glob: ^4.0.0
+    lodash.uniq: ^4.5.0
+    schema-utils: ^0.4.0
+  checksum: b45b84ccc9304093d0ca9f3bd9994a788d0735df996dadd05a2cedda7afcc7fc1253e5289174799e86656664f0c951d69b2e6cf48c4a82d7dd43ae2206004b5a
   languageName: node
   linkType: hard
 
@@ -9191,6 +9207,16 @@ fsevents@~2.1.2:
   languageName: node
   linkType: hard
 
+"schema-utils@npm:^0.4.0":
+  version: 0.4.7
+  resolution: "schema-utils@npm:0.4.7"
+  dependencies:
+    ajv: ^6.1.0
+    ajv-keywords: ^3.1.0
+  checksum: ad28f47a2cfcd9d576efab7a74447bbb4dbbaa8f8adcfeaf6dc38c8462d79cf04ecc1f6f4d5825856cff615bda3d2836c17dc0b6ed565ea454c5f15a82c2c0c0
+  languageName: node
+  linkType: hard
+
 "schema-utils@npm:^1.0.0":
   version: 1.0.0
   resolution: "schema-utils@npm:1.0.0"
@@ -10901,6 +10927,13 @@ fsevents@~2.1.2:
   dependencies:
     lodash: ^4.17.15
   checksum: 038c6d8ba45f538ce8e4505a8a3d90fbd2e554ba2065bacffe4d7cff0229cce9f0d983bf56061f8e0fef86c711da7232f88681aab285c06673b3916b1040cd9e
+  languageName: node
+  linkType: hard
+
+"webpack-shell-plugin@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "webpack-shell-plugin@npm:0.5.0"
+  checksum: e9914a9156354588d8438a48a7d72efaadedd0e06b46153322b0f581ad9bd35054823a4fe8b95d23020d08e07d5cc62ad669443f3434b73faeb76010c01947d2
   languageName: node
   linkType: hard
 

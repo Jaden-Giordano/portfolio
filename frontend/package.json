@@ -11,8 +11,10 @@
     "@portfolio/webgl": "workspace:webgl",
     "@vue/composition-api": "^1.0.0-beta.10",
     "core-js": "^3.6.5",
+    "extra-watch-webpack-plugin": "^1.0.3",
     "uid": "^1.0.0",
-    "vue": "^2.6.11"
+    "vue": "^2.6.11",
+    "webpack-shell-plugin": "^0.5.0"
   },
   "devDependencies": {
     "@vue/babel-preset-app": "^4.4.6",

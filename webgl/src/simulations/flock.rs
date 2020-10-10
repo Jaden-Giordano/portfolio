@@ -1,19 +1,20 @@
 use rand::prelude::*;
 use web_sys::WebGlRenderingContext as GL;
 
-use crate::rendering::Triangle;
 use crate::quadtree::Quadtree;
 use crate::quadtree::Rectangle as Rect;
+use crate::rendering::Triangle;
 
+#[derive(Debug)]
 pub struct Boid {
-    position: (f32, f32),
-    velocity: (f32, f32),
-    acceleration: (f32, f32),
-    alignment_force: f32,
-    cohesion_force: f32,
-    seperation_force: f32,
-    perception_size: f32,
-    max_speed: f32,
+    pub position: (f32, f32),
+    pub velocity: (f32, f32),
+    pub acceleration: (f32, f32),
+    pub alignment_force: f32,
+    pub cohesion_force: f32,
+    pub seperation_force: f32,
+    pub perception_size: f32,
+    pub max_speed: f32,
 }
 
 pub struct Flock {
@@ -28,7 +29,7 @@ impl Flock {
         let boidshape = [0.0, 1.0, 0.34, -1.0, -0.34, -1.0];
         let mut rng = rand::thread_rng();
         let mut boids = Vec::<Boid>::new();
-        let qt = Quadtree::new(
+        let mut qt = Quadtree::new(
             3,
             Rect {
                 x: -1.0,
@@ -38,7 +39,7 @@ impl Flock {
             },
         );
 
-        for _ in 0..100 {
+        for index in 0..100 {
             boids.push(Boid {
                 position: (
                     (rng.gen::<f32>() * 2.0) - 1.0,
@@ -55,6 +56,8 @@ impl Flock {
                 perception_size: 100.0,
                 max_speed: 7.0 / 2.0,
             });
+
+            let _ = qt.insert(boids[index].position.0, boids[index].position.1, index);
         }
 
         Self {
@@ -65,9 +68,9 @@ impl Flock {
         }
     }
 
-    //pub fn update() {}
+    pub fn update(&self) {}
 
-    pub fn render(&self, gl: &GL, aspect: f32) {
+    pub fn render(&self, gl: &GL) {
         for (index, boid) in self.boids.iter().enumerate() {
             self.triangle.render(
                 &gl,
@@ -78,5 +81,6 @@ impl Flock {
                 [1.0, 1.0, 1.0, 1.0],
             )
         }
+        self.quadtree.renderroot(&gl);
     }
 }
