@@ -32,7 +32,7 @@ impl Flock {
         let mut rng = rand::thread_rng();
         let mut boids = Vec::<Boid>::new();
         let mut qt = Quadtree::new(
-            3,
+            2,
             Rect {
                 x: -1.0,
                 y: 1.0,
@@ -71,18 +71,45 @@ impl Flock {
         }
     }
 
+    fn wrappedDistance(&self, vec1: (f32, f32), vec2: (f32, f32)) -> f32 {
+        let mut dx = (vec1.0 - vec2.0).abs();
+        let mut dy = (vec1.1 - vec2.1).abs();
+
+        if dx > 1.0 {
+            dx -= 2.0;
+        }
+        if dy > 1.0 {
+            dy -= 2.0;
+        }
+
+        return (dx.powi(2) + dy.powi(2)).sqrt();
+    }
+
+    fn getLocalBoids(&self, circle: (f32, f32, f32)) {
+        let mut boid_indexs: Vec<usize> = Vec::new();
+
+        if circle.0 + circle.2 > 2.0 {
+            boid_indexs.extend(self.quadtree.query(circle));
+        }
+    }
+
+    fn distance(vec1: (f32, f32), vec2: (f32, f32)) -> f32 {
+        return ((vec2.0 - vec1.0).powi(2) + (vec2.1 - vec1.1).powi(2)).sqrt();
+    }
+
     pub fn update(&self) {}
 
     pub fn render(&self, gl: &GL) {
+        let selected = self.quadtree.query((0.0, 0.0, 1.0));
+        let mut color = [1.0, 1.0, 1.0, 1.0];
         for (index, boid) in self.boids.iter().enumerate() {
-            self.triangle.render(
-                &gl,
-                boid.position.0,
-                boid.position.1,
-                0.05,
-                0.05,
-                [1.0, 1.0, 1.0, 1.0],
-            )
+            if selected.iter().any(|&i| i == index) {
+                color = [0.0, 1.0, 0.0, 1.0];
+            } else {
+                color = [1.0, 1.0, 1.0, 1.0]
+            }
+            self.triangle
+                .render(&gl, boid.position.0, boid.position.1, 0.05, 0.05, color)
         }
         self.quadtree.renderroot(&gl, &self.line);
     }

@@ -15,38 +15,32 @@ impl Rectangle {
     pub fn contains(&self, point: (f32, f32)) -> bool {
         point.0 >= self.x
             && self.x + self.width > point.0
-            && point.1 < self.y
+            && point.1 <= self.y
             && self.y - self.height < point.1
     }
 
     pub fn intersectCircle(&self, circle: (f32, f32, f32)) -> bool {
         //x,y,radius
-        if self.contains((circle.0, circle.1)) {
+        let x = (circle.0 - self.x).abs();
+        let y = (circle.1 - self.y).abs();
+
+        if x > self.width / 2.0 + circle.2 {
+            return false;
+        };
+        if y > self.height / 2.0 + circle.2 {
+            return false;
+        };
+
+        if x <= self.width / 2.0 {
             return true;
-        }
-        let mut testx = circle.0;
-        let mut testy = circle.1;
-
-        if circle.0 < self.x {
-            testx = self.x;
-        } else if circle.0 > self.x + self.width {
-            testx = self.x + self.width;
-        }
-
-        if circle.1 < self.y {
-            testy = self.y;
-        } else if circle.1 > self.y + self.height {
-            testy = self.y + self.height;
-        }
-
-        let distx = circle.0 - testx;
-        let disty = circle.1 - testy;
-        let dist = (distx.powf(2.0) + disty.powf(2.0)).sqrt();
-
-        if dist <= circle.2 {
+        };
+        if y <= self.height / 2.0 {
             return true;
-        }
-        return false;
+        };
+
+        let corner_dist = (x - self.width / 2.0).powi(2) + (y - self.height / 2.0).powi(2);
+
+        return corner_dist <= circle.2.powi(2);
     }
 }
 pub struct Quadtree {
@@ -123,38 +117,82 @@ impl Quadtree {
             },
         )));
 
+        // offload points from this qt to the children and turn points to none
+        for point in self.points.as_ref().unwrap() {
+            self.ne.as_mut().unwrap().insert(point.0, point.1, point.2);
+            self.se.as_mut().unwrap().insert(point.0, point.1, point.2);
+            self.nw.as_mut().unwrap().insert(point.0, point.1, point.2);
+            self.sw.as_mut().unwrap().insert(point.0, point.1, point.2);
+        }
+
+        self.points = None;
+
         self.divided = true;
     }
 
-    pub fn insert(&mut self, x: f32, y: f32, boidIndex: usize) -> bool {
+    pub fn insert(&mut self, x: f32, y: f32, boid_index: usize) -> bool {
         if !self.rectangle.contains((x, y)) {
             false
+        } else if self.divided {
+            if self.nw.as_mut().unwrap().insert(x, y, boid_index) {
+                true
+            } else if self.ne.as_mut().unwrap().insert(x, y, boid_index) {
+                true
+            } else if self.sw.as_mut().unwrap().insert(x, y, boid_index) {
+                true
+            } else if self.se.as_mut().unwrap().insert(x, y, boid_index) {
+                true
+            } else {
+                false
+            }
         } else if self.points.is_none() {
             //if self.points.as_ref().unwrap().len() < self.capacity as usize {
             self.points = Some(Vec::new());
-            let _ = self.points.as_mut().unwrap().push((x, y, boidIndex));
+            let _ = self.points.as_mut().unwrap().push((x, y, boid_index));
 
             true
         } else if self.points.as_ref().unwrap().len() < self.capacity as usize {
-            let _ = self.points.as_mut().unwrap().push((x, y, boidIndex));
+            let _ = self.points.as_mut().unwrap().push((x, y, boid_index));
 
             true
         } else {
             if !self.divided {
                 self.subdivide();
             }
-            if self.nw.as_mut().unwrap().insert(x, y, boidIndex) {
+            if self.nw.as_mut().unwrap().insert(x, y, boid_index) {
                 true
-            } else if self.ne.as_mut().unwrap().insert(x, y, boidIndex) {
+            } else if self.ne.as_mut().unwrap().insert(x, y, boid_index) {
                 true
-            } else if self.sw.as_mut().unwrap().insert(x, y, boidIndex) {
+            } else if self.sw.as_mut().unwrap().insert(x, y, boid_index) {
                 true
-            } else if self.se.as_mut().unwrap().insert(x, y, boidIndex) {
+            } else if self.se.as_mut().unwrap().insert(x, y, boid_index) {
                 true
             } else {
                 false
             }
         }
+    }
+
+    pub fn query(&self, circle: (f32, f32, f32)) -> Vec<usize> {
+        let mut found: Vec<usize> = Vec::new();
+        if self.divided {
+            found.extend(self.ne.as_ref().unwrap().query(circle));
+            found.extend(self.nw.as_ref().unwrap().query(circle));
+            found.extend(self.se.as_ref().unwrap().query(circle));
+            found.extend(self.sw.as_ref().unwrap().query(circle));
+        }
+
+        if self.points.is_none() || !self.rectangle.intersectCircle(circle) {
+            return found;
+        } else {
+            for point in self.points.as_ref().unwrap() {
+                if ((point.0 - circle.0).powi(2) + (point.1 - circle.1).powi(2)).sqrt() <= circle.2
+                {
+                    found.push(point.2);
+                }
+            }
+        }
+        return found;
     }
 
     pub fn renderroot(&self, gl: &GL, line: &drawableRect) {
