@@ -1,10 +1,10 @@
 use rand::prelude::*;
 use web_sys::WebGlRenderingContext as GL;
 
-use crate::quadtree::Quadtree;
-use crate::quadtree::Rectangle as Rect;
-use crate::rendering::Rectangle;
-use crate::rendering::Triangle;
+use crate::{
+    quadtree::Quadtree, quadtree::Rectangle as Rect, rendering::Rectangle, rendering::Triangle,
+    utils::ScreenSpaceEncoder,
+};
 
 #[derive(Debug)]
 pub struct Boid {
@@ -24,28 +24,33 @@ pub struct Flock {
     triangle: Triangle,
     quadtree: Quadtree,
     line: Rectangle,
+    encoder: ScreenSpaceEncoder,
 }
 
 impl Flock {
     pub fn new(gl: &GL, width: u32, height: u32) -> Self {
+        let encoder = ScreenSpaceEncoder {
+            dimensions: (width, height),
+        };
+
         let boidshape = [0.0, 1.0, 0.34, -1.0, -0.34, -1.0];
         let mut rng = rand::thread_rng();
         let mut boids = Vec::<Boid>::new();
         let mut qt = Quadtree::new(
             2,
             Rect {
-                x: -1.0,
-                y: 1.0,
-                width: 2.0,
-                height: 2.0,
+                x: 0.0,
+                y: 0.0,
+                width: width as f32,
+                height: height as f32,
             },
         );
 
-        for index in 0..100 {
+        for index in 0..1000 {
             boids.push(Boid {
                 position: (
-                    (rng.gen::<f32>() * 2.0) - 1.0,
-                    (rng.gen::<f32>() * 2.0) - 1.0,
+                    (rng.gen::<f32>() * encoder.dimensions.0 as f32),
+                    (rng.gen::<f32>() * encoder.dimensions.1 as f32),
                 ),
                 velocity: (
                     (rng.gen::<f32>() * 2.0) - 1.0,
@@ -68,6 +73,7 @@ impl Flock {
             boids,
             quadtree: qt,
             line: Rectangle::new(&gl),
+            encoder,
         }
     }
 
@@ -100,7 +106,11 @@ impl Flock {
     pub fn update(&self) {}
 
     pub fn render(&self, gl: &GL) {
-        let selected = self.quadtree.query((0.0, 0.0, 1.0));
+        let selected = self.quadtree.query((
+            self.dimensions.0 as f32 / 2.0,
+            self.dimensions.1 as f32 / 2.0,
+            40.0,
+        ));
         let mut color = [1.0, 1.0, 1.0, 1.0];
         for (index, boid) in self.boids.iter().enumerate() {
             if selected.iter().any(|&i| i == index) {
@@ -108,9 +118,10 @@ impl Flock {
             } else {
                 color = [1.0, 1.0, 1.0, 1.0]
             }
-            self.triangle
-                .render(&gl, boid.position.0, boid.position.1, 0.05, 0.05, color)
+            let test = self.encoder.encode(boid.position.0, boid.position.1);
+            self.triangle.render(&gl, test.0, test.1, 0.05, 0.05, color);
         }
-        self.quadtree.renderroot(&gl, &self.line);
+
+        self.quadtree.renderroot(&gl, &self.line, self.encoder);
     }
 }

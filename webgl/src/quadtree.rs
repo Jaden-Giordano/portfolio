@@ -1,4 +1,5 @@
 use crate::rendering::Rectangle as drawableRect;
+use crate::utils::ScreenSpaceEncoder;
 
 use crate::simulations::Boid;
 use web_sys::{WebGlBuffer, WebGlProgram, WebGlRenderingContext as GL, WebGlUniformLocation};
@@ -15,8 +16,8 @@ impl Rectangle {
     pub fn contains(&self, point: (f32, f32)) -> bool {
         point.0 >= self.x
             && self.x + self.width > point.0
-            && point.1 <= self.y
-            && self.y - self.height < point.1
+            && point.1 >= self.y
+            && self.y + self.height > point.1
     }
 
     pub fn intersectCircle(&self, circle: (f32, f32, f32)) -> bool {
@@ -77,31 +78,21 @@ impl Quadtree {
     }
 
     fn subdivide(&mut self) {
-        self.nw = Some(Box::new(Quadtree::new(
-            self.capacity,
-            Rectangle {
-                x: self.rectangle.x,
-                y: self.rectangle.y,
-                width: self.rectangle.width / 2.0,
-                height: self.rectangle.height / 2.0,
-            },
-        )));
-
         self.sw = Some(Box::new(Quadtree::new(
             self.capacity,
             Rectangle {
                 x: self.rectangle.x,
-                y: self.rectangle.y - self.rectangle.height / 2.0,
+                y: self.rectangle.y,
                 width: self.rectangle.width / 2.0,
                 height: self.rectangle.height / 2.0,
             },
         )));
 
-        self.ne = Some(Box::new(Quadtree::new(
+        self.nw = Some(Box::new(Quadtree::new(
             self.capacity,
             Rectangle {
-                x: self.rectangle.x + self.rectangle.width / 2.0,
-                y: self.rectangle.y,
+                x: self.rectangle.x,
+                y: self.rectangle.y + self.rectangle.height / 2.0,
                 width: self.rectangle.width / 2.0,
                 height: self.rectangle.height / 2.0,
             },
@@ -111,7 +102,17 @@ impl Quadtree {
             self.capacity,
             Rectangle {
                 x: self.rectangle.x + self.rectangle.width / 2.0,
-                y: self.rectangle.y - self.rectangle.height / 2.0,
+                y: self.rectangle.y,
+                width: self.rectangle.width / 2.0,
+                height: self.rectangle.height / 2.0,
+            },
+        )));
+
+        self.ne = Some(Box::new(Quadtree::new(
+            self.capacity,
+            Rectangle {
+                x: self.rectangle.x + self.rectangle.width / 2.0,
+                y: self.rectangle.y + self.rectangle.height / 2.0,
                 width: self.rectangle.width / 2.0,
                 height: self.rectangle.height / 2.0,
             },
@@ -195,125 +196,97 @@ impl Quadtree {
         return found;
     }
 
-    pub fn renderroot(&self, gl: &GL, line: &drawableRect) {
+    pub fn renderroot(&self, gl: &GL, line: &drawableRect, dimensions: ScreenSpaceEncoder) {
         let color = [0.5, 0.5, 0.5, 1.0];
 
-        line.render(
-            &gl,
-            self.rectangle.x,
-            self.rectangle.y,
-            self.rectangle.width,
-            -0.007,
-            color,
-        );
+        let (mut x, mut y) = dimensions.encode(self.rectangle.x, self.rectangle.y);
+        let (mut width, mut height) =
+            dimensions.encode(self.rectangle.width, self.rectangle.height);
 
-        line.render(
-            &gl,
-            self.rectangle.x,
-            self.rectangle.y - self.rectangle.width,
-            0.004,
-            self.rectangle.height,
-            color,
-        );
+        width = width - x;
+        height = height - y;
 
-        line.render(
-            &gl,
-            self.rectangle.x,
-            self.rectangle.y - self.rectangle.width,
-            self.rectangle.width,
-            0.007,
-            color,
-        );
+        y = height + y;
 
-        line.render(
-            &gl,
-            self.rectangle.x + self.rectangle.width,
-            self.rectangle.y - self.rectangle.height,
-            -0.004,
-            self.rectangle.height,
-            color,
-        );
+        line.render(&gl, x, y, width, -0.007, color);
+
+        line.render(&gl, x, y - width, 0.004, height, color);
+
+        line.render(&gl, x, y - width, width, 0.007, color);
+
+        line.render(&gl, x + width, y - height, -0.004, height, color);
 
         if self.divided {
             self.nw
                 .as_ref()
                 .unwrap()
-                .renderchild(&gl, (true, true), &line);
+                .renderchild(&gl, (true, true), &line, dimensions);
             self.ne
                 .as_ref()
                 .unwrap()
-                .renderchild(&gl, (true, false), &line);
-            self.se
-                .as_ref()
-                .unwrap()
-                .renderchild(&gl, (false, false), &line);
+                .renderchild(&gl, (true, false), &line, dimensions);
             self.sw
                 .as_ref()
                 .unwrap()
-                .renderchild(&gl, (false, true), &line);
+                .renderchild(&gl, (false, false), &line, dimensions);
+            self.se
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (false, true), &line, dimensions);
         }
     }
 
-    pub fn renderchild(&self, gl: &GL, dir: (bool, bool), line: &drawableRect) {
+    pub fn renderchild(
+        &self,
+        gl: &GL,
+        dir: (bool, bool),
+        line: &drawableRect,
+        dimensions: ScreenSpaceEncoder,
+    ) {
         let color = [0.5, 0.5, 0.5, 1.0];
+
+        let (x, mut y) = dimensions.encode(self.rectangle.x, self.rectangle.y);
+        let (mut width, mut height) =
+            dimensions.encode(self.rectangle.width, self.rectangle.height);
+
+        width = width - -1.0;
+        height = height - -1.0;
 
         if dir.0 && dir.1 {
             //nw
+            line.render(&gl, x + 0.004, y, width + 0.002, 0.004, color);
             line.render(
                 &gl,
-                self.rectangle.x,
-                self.rectangle.y - self.rectangle.height,
-                self.rectangle.width,
+                x + width + 0.002, //0.002 is half the width of a line
+                y,
                 0.004,
-                color,
-            );
-            line.render(
-                &gl,
-                self.rectangle.x + self.rectangle.width + 0.002, //0.002 is half the width of a line
-                self.rectangle.y - self.rectangle.height,
-                0.004,
-                self.rectangle.height,
+                height,
                 color,
             )
         } else if dir.0 && !dir.1 {
             //ne
-            line.render(
-                &gl,
-                self.rectangle.x,
-                self.rectangle.y - self.rectangle.height,
-                self.rectangle.width,
-                0.004,
-                color,
-            )
+            line.render(&gl, x, y, width + 0.004, 0.004, color)
         } else if !dir.0 && dir.1 {
             //se
-            line.render(
-                &gl,
-                self.rectangle.x + self.rectangle.width + 0.002,
-                self.rectangle.y - self.rectangle.height,
-                0.004,
-                self.rectangle.height,
-                color,
-            )
+            line.render(&gl, x + 0.002, y, 0.004, height, color)
         }
-
         if self.divided {
             self.nw
                 .as_ref()
                 .unwrap()
-                .renderchild(&gl, (true, true), &line);
+                .renderchild(&gl, (true, true), &line, dimensions);
             self.ne
                 .as_ref()
                 .unwrap()
-                .renderchild(&gl, (true, false), &line);
-            self.se
-                .as_ref()
-                .unwrap()
-                .renderchild(&gl, (false, false), &line);
+                .renderchild(&gl, (true, false), &line, dimensions);
             self.sw
                 .as_ref()
                 .unwrap()
-                .renderchild(&gl, (false, true), &line);
+                .renderchild(&gl, (false, false), &line, dimensions);
+            self.se
+                .as_ref()
+                .unwrap()
+                .renderchild(&gl, (false, true), &line, dimensions);
         }
     }
 }

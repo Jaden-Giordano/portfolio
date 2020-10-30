@@ -1,7 +1,7 @@
 <template>
   <page>
     <div class="home">
-      <span class="title">Jaden Giordano</span>
+      <span class="title">My name lol</span>
       <hr>
       <div class="tags">
         <span>Frontend</span>
@@ -10,7 +10,7 @@
       </div>
     </div>
     <template #footer>
-      <span>&copy; Jaden Giordano 2020</span>
+      <span>&copy; my name lol</span>
       <div class="contact">
         <a href="mailto:thejadenjack@gmail.com">Email</a>
         <a href="https://github.com/Jaden-Giordano">Github</a>

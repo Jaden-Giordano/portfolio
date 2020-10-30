@@ -9,7 +9,10 @@ pub struct LoopingEncoder {
 
 impl CoordinateEncoder for LoopingEncoder {
     fn decode(&self, index: usize) -> (u32, u32) {
-        (index as u32 % self.dimensions.0, index as u32 / self.dimensions.0)
+        (
+            index as u32 % self.dimensions.0,
+            index as u32 / self.dimensions.0,
+        )
     }
 
     fn encode(&self, x: i32, y: i32) -> Option<usize> {
@@ -25,7 +28,9 @@ impl CoordinateEncoder for LoopingEncoder {
             y as u32
         };
         // Perform a modulo on the length of the tiles vector to loop coordinate space.
-        Some((y * self.dimensions.0 + x) as usize % (self.dimensions.0 * self.dimensions.1) as usize)
+        Some(
+            (y * self.dimensions.0 + x) as usize % (self.dimensions.0 * self.dimensions.1) as usize,
+        )
     }
 }
 
@@ -43,7 +48,10 @@ pub struct FlatEncoder {
 
 impl CoordinateEncoder for FlatEncoder {
     fn decode(&self, index: usize) -> (u32, u32) {
-        (index as u32 % self.dimensions.0, index as u32 / self.dimensions.0)
+        (
+            index as u32 % self.dimensions.0,
+            index as u32 / self.dimensions.0,
+        )
     }
 
     fn encode(&self, x: i32, y: i32) -> Option<usize> {
@@ -61,4 +69,39 @@ impl Clone for FlatEncoder {
             dimensions: self.dimensions,
         }
     }
+}
+
+#[derive(Copy)]
+pub struct ScreenSpaceEncoder {
+    pub dimensions: (u32, u32),
+}
+
+impl Clone for ScreenSpaceEncoder {
+    fn clone(&self) -> ScreenSpaceEncoder {
+        ScreenSpaceEncoder {
+            dimensions: self.dimensions,
+        }
+    }
+}
+
+impl ScreenSpaceEncoder {
+    pub fn decode(&self, x: f32, y: f32) -> (f32, f32) {
+        //from normal space
+        return (
+            map(x, (-1.0, 1.0), (0.0, self.dimensions.0 as f32)),
+            map(y, (-1.0, 1.0), (0.0, self.dimensions.1 as f32)),
+        );
+    }
+
+    pub fn encode(&self, x: f32, y: f32) -> (f32, f32) {
+        //from screenspace
+        return (
+            map(x, (0.0, self.dimensions.0 as f32), (-1.0, 1.0)),
+            map(y, (0.0, self.dimensions.1 as f32), (-1.0, 1.0)),
+        );
+    }
+}
+
+fn map(index: f32, a: (f32, f32), b: (f32, f32)) -> f32 {
+    return (index - a.0) / (a.1 - a.0) * (b.1 - b.0) + b.0;
 }
