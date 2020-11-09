@@ -12,6 +12,7 @@ pub struct Triangle {
     u_color: WebGlUniformLocation,
     u_scale: WebGlUniformLocation,
     u_translation: WebGlUniformLocation,
+    u_rotation: WebGlUniformLocation,
     vertex_buffer: WebGlBuffer,
 }
 
@@ -56,6 +57,7 @@ impl Triangle {
         let u_color = gl.get_uniform_location(&program, "u_Color").unwrap();
         let u_scale = gl.get_uniform_location(&program, "u_Scale").unwrap();
         let u_translation = gl.get_uniform_location(&program, "u_Translation").unwrap();
+        let u_rotation = gl.get_uniform_location(&program, "u_Rotation").unwrap(); //were going to do rotation in the shader, is faster.
 
         Self {
             indices,
@@ -63,6 +65,7 @@ impl Triangle {
             u_color,
             u_scale,
             u_translation,
+            u_rotation,
             vertex_buffer,
         }
     }
@@ -79,6 +82,7 @@ impl Triangle {
         gl.uniform4f(Some(&self.u_color), color[0], color[1], color[2], color[3]);
         gl.uniform4f(Some(&self.u_scale), width, height, 1.0, 1.0);
         gl.uniform4f(Some(&self.u_translation), x, y, 0.0, 0.0);
+        gl.uniform1f(Some(&self.u_rotation), 3.14 / 2.0);
 
         gl.draw_elements_with_i32(GL::TRIANGLES, INDICES.len() as i32, GL::UNSIGNED_SHORT, 0);
     }

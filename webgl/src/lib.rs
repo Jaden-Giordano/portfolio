@@ -34,10 +34,10 @@ impl FolioClient {
         console_error_panic_hook::set_once();
         let width = gl.drawing_buffer_width();
         let height = gl.drawing_buffer_height();
-        // let gol = GoL::new(&gl, canvas.width() / 10, canvas.height() / 10);
+        // let gol = GoL::new(&gl, canvas.width() / 10, canvasj.height() / 10);
         //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
         //let falling_sand = FallingSand::new(&gl, width as u32 / 5, height as u32 / 5);
-        let flock = Flock::new(&gl, width as u32 / 5, height as u32 / 5);
+        let flock = Flock::new(&gl, width as u32, height as u32);
 
         Self { gl, sim: flock }
     }
