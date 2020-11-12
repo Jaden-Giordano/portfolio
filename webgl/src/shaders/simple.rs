@@ -5,13 +5,21 @@ uniform vec4 u_Scale;
 uniform vec4 u_Translation;
 uniform float u_Rotation;
 
+vec4 Z(vec4 v, float a)
+{
+    vec4 vo = v; float c = cos(a); float s = sin(a);
+    v.x = c * vo.x - s * vo.y;
+    v.y = s * vo.x + c * vo.y;
+    return v;
+}
+
 void main() {
     vec4 scaled_position = position * u_Scale;
 
     float x = scaled_position.x;
     float y = scaled_position.y;
 
-    vec4 rotated_position = vec4(x * cos(u_Rotation) - y * sin(u_Rotation), x * sin(u_Rotation) + y * cos(u_Rotation), 0.0, 0.0);
+    vec4 rotated_position = Z(scaled_position, u_Rotation);
 
 
     gl_Position = rotated_position + u_Translation;

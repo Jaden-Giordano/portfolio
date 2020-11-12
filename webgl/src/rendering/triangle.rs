@@ -70,7 +70,16 @@ impl Triangle {
         }
     }
 
-    pub fn render(&self, gl: &GL, x: f32, y: f32, width: f32, height: f32, color: [f32; 4]) {
+    pub fn render(
+        &self,
+        gl: &GL,
+        x: f32,
+        y: f32,
+        width: f32,
+        height: f32,
+        rotation: f32,
+        color: [f32; 4],
+    ) {
         gl.use_program(Some(&self.program));
 
         gl.bind_buffer(GL::ARRAY_BUFFER, Some(&self.vertex_buffer));
@@ -82,7 +91,7 @@ impl Triangle {
         gl.uniform4f(Some(&self.u_color), color[0], color[1], color[2], color[3]);
         gl.uniform4f(Some(&self.u_scale), width, height, 1.0, 1.0);
         gl.uniform4f(Some(&self.u_translation), x, y, 0.0, 0.0);
-        gl.uniform1f(Some(&self.u_rotation), 3.14 / 2.0);
+        gl.uniform1f(Some(&self.u_rotation), rotation);
 
         gl.draw_elements_with_i32(GL::TRIANGLES, INDICES.len() as i32, GL::UNSIGNED_SHORT, 0);
     }

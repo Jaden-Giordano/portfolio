@@ -119,7 +119,8 @@ impl Flock {
                 color = [1.0, 1.0, 1.0, 1.0]
             }
             let test = self.encoder.encode(boid.position.0, boid.position.1);
-            self.triangle.render(&gl, test.0, test.1, 0.05, 0.05, color);
+            self.triangle
+                .render(&gl, test.0, test.1, 0.05, 0.05, 0.0, color);
         }
 
         self.quadtree.renderroot(&gl, &self.line, self.encoder);
