@@ -42,8 +42,11 @@ impl FolioClient {
         Self { gl, sim: flock }
     }
 
-    pub fn update(&mut self, _time: f32, _height: f32, _width: f32) -> Result<(), JsValue> {
-        self.sim.update();
+    pub fn update(&mut self) -> Result<(), JsValue> {
+        self.sim.update(
+            self.gl.drawing_buffer_width(),
+            self.gl.drawing_buffer_height(),
+        );
         Ok(())
     }
 

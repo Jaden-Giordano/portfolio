@@ -18,13 +18,45 @@ pub struct Boid {
     pub max_speed: f32,
 }
 
+impl Boid {
+    pub fn update(&mut self, width: i32, height: i32) {
+        self.position = (
+            self.position.0 + self.velocity.0,
+            self.position.1 + self.velocity.1,
+        );
+        self.velocity = (
+            self.velocity.0 + self.acceleration.0,
+            self.velocity.1 + self.acceleration.1,
+        );
+
+        self.edges(width, height);
+    }
+
+    //instead of boids draining off the edges wrap space into a torus lmao
+    fn edges(&mut self, width: i32, height: i32) {
+        if self.position.0 > (width + 11) as f32 {
+            self.position.0 = -11.0;
+        } else if self.position.0 < -11.0 {
+            self.position.0 = (width + 11) as f32;
+        } // add some arbitrary amount so the triangles are popping in and out of existancel
+
+        if self.position.1 > (height + 11) as f32 {
+            self.position.1 = -11.0;
+        } else if self.position.1 < -11.0 {
+            self.position.1 = (height + 11) as f32;
+        }
+    }
+}
+
 pub struct Flock {
     dimensions: (u32, u32),
+    aspect: f32,
     boids: Vec<Boid>,
     triangle: Triangle,
     quadtree: Quadtree,
     line: Rectangle,
     encoder: ScreenSpaceEncoder,
+    count: u32,
 }
 
 impl Flock {
@@ -33,7 +65,7 @@ impl Flock {
             dimensions: (width, height),
         };
 
-        let boidshape = [0.0, 1.0, 0.34, -1.0, -0.34, -1.0];
+        let boidshape = [0.0, 0.5, 0.34, -0.5, -0.34, -0.5];
         let mut rng = rand::thread_rng();
         let mut boids = Vec::<Boid>::new();
         let mut qt = Quadtree::new(
@@ -69,11 +101,13 @@ impl Flock {
 
         Self {
             dimensions: (width, height),
+            aspect: width as f32 / height as f32,
             triangle: Triangle::new(&gl, boidshape),
             boids,
             quadtree: qt,
             line: Rectangle::new(&gl),
             encoder,
+            count: 0,
         }
     }
 
@@ -103,26 +137,47 @@ impl Flock {
         return ((vec2.0 - vec1.0).powi(2) + (vec2.1 - vec1.1).powi(2)).sqrt();
     }
 
-    pub fn update(&self) {}
+    pub fn update(&mut self, width: i32, height: i32) {
+        self.encoder.updateDimensions(width as u32, height as u32);
+        self.count = (self.count + 1) % 101;
+        self.aspect = width as f32 / height as f32;
+        self.dimensions = (width as u32, height as u32);
+        self.quadtree.reset();
+
+        for (pos, boid) in self.boids.iter_mut().enumerate() {
+            boid.update(width, height);
+
+            self.quadtree.insert(boid.position.0, boid.position.1, pos);
+        }
+    }
 
     pub fn render(&self, gl: &GL) {
         let selected = self.quadtree.query((
             self.dimensions.0 as f32 / 2.0,
             self.dimensions.1 as f32 / 2.0,
-            40.0,
+            100.0,
         ));
+        self.quadtree.renderroot(&gl, &self.line, self.encoder);
+
         let mut color = [1.0, 1.0, 1.0, 1.0];
         for (index, boid) in self.boids.iter().enumerate() {
+            let ang = boid.velocity.1.atan2(boid.velocity.0);
+
             if selected.iter().any(|&i| i == index) {
                 color = [0.0, 1.0, 0.0, 1.0];
             } else {
-                color = [1.0, 1.0, 1.0, 1.0]
+                color = [0.37, 0.22, 0.40, 1.0]
             }
             let test = self.encoder.encode(boid.position.0, boid.position.1);
-            self.triangle
-                .render(&gl, test.0, test.1, 0.05, 0.05, 0.0, color);
+            self.triangle.render(
+                &gl,
+                test.0,
+                test.1,
+                0.05,
+                0.05, //* self.aspect,
+                ang - std::f32::consts::FRAC_PI_2,
+                color,
+            );
         }
-
-        self.quadtree.renderroot(&gl, &self.line, self.encoder);
     }
 }

@@ -85,6 +85,10 @@ impl Clone for ScreenSpaceEncoder {
 }
 
 impl ScreenSpaceEncoder {
+    pub fn updateDimensions(&mut self, width: u32, height: u32) {
+        self.dimensions = (width, height);
+    }
+
     pub fn decode(&self, x: f32, y: f32) -> (f32, f32) {
         //from normal space
         return (
