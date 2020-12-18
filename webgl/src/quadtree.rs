@@ -1,5 +1,6 @@
 use crate::rendering::Rectangle as drawableRect;
 use crate::utils::ScreenSpaceEncoder;
+use cgmath::prelude::*;
 
 use crate::simulations::Boid;
 use web_sys::{WebGlBuffer, WebGlProgram, WebGlRenderingContext as GL, WebGlUniformLocation};
@@ -13,11 +14,11 @@ pub struct Rectangle {
 }
 
 impl Rectangle {
-    pub fn contains(&self, point: (f32, f32)) -> bool {
-        point.0 >= self.x
-            && self.x + self.width > point.0
-            && point.1 >= self.y
-            && self.y + self.height > point.1
+    pub fn contains(&self, point: cgmath::Vector2<f32>) -> bool {
+        point.x >= self.x
+            && self.x + self.width > point.x
+            && point.y >= self.y
+            && self.y + self.height > point.y
     }
 
     pub fn intersectCircle(&self, circle: (f32, f32, f32)) -> bool {
@@ -47,7 +48,7 @@ impl Rectangle {
 pub struct Quadtree {
     rectangle: Rectangle,
     capacity: i16,
-    points: Option<Vec<(f32, f32, usize)>>,
+    points: Option<Vec<(cgmath::Vector2<f32>, usize)>>,
     divided: bool,
     nw: Option<Box<Quadtree>>, //boxes?
     sw: Option<Box<Quadtree>>,
@@ -65,7 +66,7 @@ impl Quadtree {
             ne: None,
             se: None,
             divided: false,
-            points: None::<Vec<(f32, f32, usize)>>,
+            points: None::<Vec<(cgmath::Vector2<f32>, usize)>>,
         }
     }
 
@@ -120,10 +121,10 @@ impl Quadtree {
 
         // offload points from this qt to the children and turn points to none
         for point in self.points.as_ref().unwrap() {
-            self.ne.as_mut().unwrap().insert(point.0, point.1, point.2);
-            self.se.as_mut().unwrap().insert(point.0, point.1, point.2);
-            self.nw.as_mut().unwrap().insert(point.0, point.1, point.2);
-            self.sw.as_mut().unwrap().insert(point.0, point.1, point.2);
+            self.ne.as_mut().unwrap().insert(point.0, point.1);
+            self.se.as_mut().unwrap().insert(point.0, point.1);
+            self.nw.as_mut().unwrap().insert(point.0, point.1);
+            self.sw.as_mut().unwrap().insert(point.0, point.1);
         }
 
         self.points = None;
@@ -131,17 +132,17 @@ impl Quadtree {
         self.divided = true;
     }
 
-    pub fn insert(&mut self, x: f32, y: f32, boid_index: usize) -> bool {
-        if !self.rectangle.contains((x, y)) {
+    pub fn insert(&mut self, position: cgmath::Vector2<f32>, boid_index: usize) -> bool {
+        if !self.rectangle.contains(position) {
             false
         } else if self.divided {
-            if self.nw.as_mut().unwrap().insert(x, y, boid_index) {
+            if self.nw.as_mut().unwrap().insert(position, boid_index) {
                 true
-            } else if self.ne.as_mut().unwrap().insert(x, y, boid_index) {
+            } else if self.ne.as_mut().unwrap().insert(position, boid_index) {
                 true
-            } else if self.sw.as_mut().unwrap().insert(x, y, boid_index) {
+            } else if self.sw.as_mut().unwrap().insert(position, boid_index) {
                 true
-            } else if self.se.as_mut().unwrap().insert(x, y, boid_index) {
+            } else if self.se.as_mut().unwrap().insert(position, boid_index) {
                 true
             } else {
                 false
@@ -149,24 +150,24 @@ impl Quadtree {
         } else if self.points.is_none() {
             //if self.points.as_ref().unwrap().len() < self.capacity as usize {
             self.points = Some(Vec::new());
-            let _ = self.points.as_mut().unwrap().push((x, y, boid_index));
+            let _ = self.points.as_mut().unwrap().push((position, boid_index));
 
             true
         } else if self.points.as_ref().unwrap().len() < self.capacity as usize {
-            let _ = self.points.as_mut().unwrap().push((x, y, boid_index));
+            let _ = self.points.as_mut().unwrap().push((position, boid_index));
 
             true
         } else {
             if !self.divided {
                 self.subdivide();
             }
-            if self.nw.as_mut().unwrap().insert(x, y, boid_index) {
+            if self.nw.as_mut().unwrap().insert(position, boid_index) {
                 true
-            } else if self.ne.as_mut().unwrap().insert(x, y, boid_index) {
+            } else if self.ne.as_mut().unwrap().insert(position, boid_index) {
                 true
-            } else if self.sw.as_mut().unwrap().insert(x, y, boid_index) {
+            } else if self.sw.as_mut().unwrap().insert(position, boid_index) {
                 true
-            } else if self.se.as_mut().unwrap().insert(x, y, boid_index) {
+            } else if self.se.as_mut().unwrap().insert(position, boid_index) {
                 true
             } else {
                 false
@@ -187,9 +188,10 @@ impl Quadtree {
             return found;
         } else {
             for point in self.points.as_ref().unwrap() {
-                if ((point.0 - circle.0).powi(2) + (point.1 - circle.1).powi(2)).sqrt() <= circle.2
+                if ((point.0.x - circle.0).powi(2) + (point.0.y - circle.1).powi(2)).sqrt()
+                    <= circle.2
                 {
-                    found.push(point.2);
+                    found.push(point.1);
                 }
             }
         }

@@ -1,4 +1,6 @@
+use cgmath::prelude::*;
 use rand::prelude::*;
+use std::ops::{Add, Div, DivAssign, Mul};
 use web_sys::WebGlRenderingContext as GL;
 
 use crate::{
@@ -6,45 +8,92 @@ use crate::{
     utils::ScreenSpaceEncoder,
 };
 
-#[derive(Debug)]
+#[derive(Debug, Copy, Clone)]
 pub struct Boid {
-    pub position: (f32, f32),
-    pub velocity: (f32, f32),
-    pub acceleration: (f32, f32),
+    pub position: cgmath::Vector2<f32>,
+    pub velocity: cgmath::Vector2<f32>,
+    pub acceleration: cgmath::Vector2<f32>,
     pub alignment_force: f32,
     pub cohesion_force: f32,
     pub seperation_force: f32,
     pub perception_size: f32,
     pub max_speed: f32,
+    pub index: usize,
 }
 
 impl Boid {
-    pub fn update(&mut self, width: i32, height: i32) {
-        self.position = (
-            self.position.0 + self.velocity.0,
-            self.position.1 + self.velocity.1,
-        );
-        self.velocity = (
-            self.velocity.0 + self.acceleration.0,
-            self.velocity.1 + self.acceleration.1,
-        );
+    pub fn update(&mut self, width: i32, height: i32, sensed_boids: &Vec<(Boid, f32)>) {
+        self.acceleration *= 0.0;
 
-        self.edges(width, height);
+        let alignment = self.align(sensed_boids);
+
+        self.edges(width, height); // wrap space into a torus
+
+        self.acceleration = self.acceleration.add(alignment);
+
+        self.position = self.position.add(self.velocity);
+        self.velocity = self.velocity.add(self.acceleration);
+        //apply cohesion seperation and alignment forces
     }
 
     //instead of boids draining off the edges wrap space into a torus lmao
     fn edges(&mut self, width: i32, height: i32) {
-        if self.position.0 > (width + 11) as f32 {
-            self.position.0 = -11.0;
-        } else if self.position.0 < -11.0 {
-            self.position.0 = (width + 11) as f32;
+        if self.position.x > (width + 11) as f32 {
+            self.position.x = -11.0;
+        } else if self.position.x < -11.0 {
+            self.position.x = (width + 11) as f32;
         } // add some arbitrary amount so the triangles are popping in and out of existancel
 
-        if self.position.1 > (height + 11) as f32 {
-            self.position.1 = -11.0;
-        } else if self.position.1 < -11.0 {
-            self.position.1 = (height + 11) as f32;
+        if self.position.y > (height + 11) as f32 {
+            self.position.y = -11.0;
+        } else if self.position.y < -11.0 {
+            self.position.y = (height + 11) as f32;
         }
+    }
+
+    fn align(&mut self, boids: &Vec<(Boid, f32)>) -> cgmath::Vector2<f32> {
+        let perception = 75.0 / 2.0;
+        let mut steering = cgmath::Vector2::new(0.0, 0.0);
+        let mut total = 0;
+        for boid in boids {
+            if boid.0.index == self.index {
+                continue;
+            }
+            let distance = boid.1;
+
+            if distance < perception && boid.0.index != self.index {
+                steering = steering.add(boid.0.velocity);
+                total += 1;
+            }
+        }
+
+        if total > 0 && steering != cgmath::Vector2::new(0.0, 0.0) {
+            steering /= total as f32;
+            steering = self.setMag(self.max_speed, &steering);
+            steering -= self.velocity;
+            steering = self.limit(&steering, self.cohesion_force)
+        }
+
+        return steering;
+    }
+
+    fn limit(&self, vec: &cgmath::Vector2<f32>, speed: f32) -> cgmath::Vector2<f32> {
+        if vec.magnitude() > speed {
+            return self.setMag(speed, vec);
+        } else {
+            return *vec;
+        }
+    }
+
+    fn setMag(&self, mag: f32, vec: &cgmath::Vector2<f32>) -> cgmath::Vector2<f32> {
+        let currentMag = vec.magnitude();
+        let mut newmag = cgmath::Vector2::new(0.0, 0.0);
+
+        if currentMag != 0.0 {
+            newmag = (vec * mag) / currentMag;
+        }
+
+        return newmag;
     }
 }
 
@@ -80,23 +129,25 @@ impl Flock {
 
         for index in 0..1000 {
             boids.push(Boid {
-                position: (
-                    (rng.gen::<f32>() * encoder.dimensions.0 as f32),
-                    (rng.gen::<f32>() * encoder.dimensions.1 as f32),
+                position: cgmath::Vector2::new(
+                    rng.gen::<f32>() * encoder.dimensions.0 as f32,
+                    rng.gen::<f32>() * encoder.dimensions.1 as f32,
                 ),
-                velocity: (
+                velocity: cgmath::Vector2::new(
                     (rng.gen::<f32>() * 2.0) - 1.0,
                     (rng.gen::<f32>() * 2.0) - 1.0,
                 ),
-                acceleration: (0.0, 0.0),
+                acceleration: cgmath::Vector2::new(0.0, 0.0),
                 alignment_force: 0.2,
                 cohesion_force: 0.2,
                 seperation_force: 0.6,
                 perception_size: 100.0,
                 max_speed: 7.0 / 2.0,
+                index,
             });
 
-            let _ = qt.insert(boids[index].position.0, boids[index].position.1, index);
+            //TODO vectorlib
+            let _ = qt.insert(boids[index].position, index);
         }
 
         Self {
@@ -111,15 +162,20 @@ impl Flock {
         }
     }
 
-    fn wrappedDistance(&self, vec1: (f32, f32), vec2: (f32, f32)) -> f32 {
-        let mut dx = (vec1.0 - vec2.0).abs();
-        let mut dy = (vec1.1 - vec2.1).abs();
+    fn wrapped_distance(
+        vec1: cgmath::Vector2<f32>,
+        vec2: cgmath::Vector2<f32>,
+        width: u32,
+        height: u32,
+    ) -> f32 {
+        let mut dx = (vec1.x - vec2.x).abs();
+        let mut dy = (vec1.y - vec2.y).abs();
 
-        if dx > 1.0 {
-            dx -= 2.0;
+        if dx > width as f32 {
+            dx = width as f32 - dx;
         }
-        if dy > 1.0 {
-            dy -= 2.0;
+        if dy > height as f32 {
+            dy = height as f32 - dy;
         }
 
         return (dx.powi(2) + dy.powi(2)).sqrt();
@@ -144,10 +200,30 @@ impl Flock {
         self.dimensions = (width as u32, height as u32);
         self.quadtree.reset();
 
-        for (pos, boid) in self.boids.iter_mut().enumerate() {
-            boid.update(width, height);
+        let test = self.boids.clone();
 
-            self.quadtree.insert(boid.position.0, boid.position.1, pos);
+        for (pos, boid) in self.boids.iter_mut().enumerate() {
+            let mut sensed: Vec<(Boid, f32)> = Vec::new();
+
+            let selected =
+                self.quadtree
+                    .query((boid.position.x, boid.position.y, boid.perception_size));
+
+            for i in selected {
+                sensed.push((
+                    test[i],
+                    crate::Flock::wrapped_distance(
+                        boid.position,
+                        test[i].position,
+                        self.dimensions.0,
+                        self.dimensions.1,
+                    ),
+                ))
+            }
+
+            boid.update(width, height, &sensed);
+
+            self.quadtree.insert(boid.position, pos);
         }
     }
 
@@ -161,14 +237,14 @@ impl Flock {
 
         let mut color = [1.0, 1.0, 1.0, 1.0];
         for (index, boid) in self.boids.iter().enumerate() {
-            let ang = boid.velocity.1.atan2(boid.velocity.0);
+            let ang = boid.velocity.y.atan2(boid.velocity.x);
 
             if selected.iter().any(|&i| i == index) {
                 color = [0.0, 1.0, 0.0, 1.0];
             } else {
                 color = [0.37, 0.22, 0.40, 1.0]
             }
-            let test = self.encoder.encode(boid.position.0, boid.position.1);
+            let test = self.encoder.encode(boid.position.x, boid.position.y);
             self.triangle.render(
                 &gl,
                 test.0,
