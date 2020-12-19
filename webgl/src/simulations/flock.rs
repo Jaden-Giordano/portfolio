@@ -26,13 +26,17 @@ impl Boid {
         self.acceleration *= 0.0;
 
         let alignment = self.align(sensed_boids);
+        let cohesion = self.cohesion(sensed_boids);
+        let seperation = self.seperation(sensed_boids);
 
         self.edges(width, height); // wrap space into a torus
 
-        self.acceleration = self.acceleration.add(alignment);
+        self.acceleration = self.acceleration + seperation + cohesion + alignment;
 
         self.position = self.position.add(self.velocity);
         self.velocity = self.velocity.add(self.acceleration);
+        self.velocity = self.limit(&self.velocity, self.max_speed);
+        self.velocity = self.setMag(self.max_speed, &self.velocity);
         //apply cohesion seperation and alignment forces
     }
 
@@ -52,7 +56,6 @@ impl Boid {
     }
 
     fn align(&mut self, boids: &Vec<(Boid, f32)>) -> cgmath::Vector2<f32> {
-        let perception = 75.0 / 2.0;
         let mut steering = cgmath::Vector2::new(0.0, 0.0);
         let mut total = 0;
         for boid in boids {
@@ -61,7 +64,7 @@ impl Boid {
             }
             let distance = boid.1;
 
-            if distance < perception && boid.0.index != self.index {
+            if distance < self.perception_size {
                 steering = steering.add(boid.0.velocity);
                 total += 1;
             }
@@ -72,6 +75,51 @@ impl Boid {
             steering = self.setMag(self.max_speed, &steering);
             steering -= self.velocity;
             steering = self.limit(&steering, self.cohesion_force)
+        }
+
+        return steering;
+    }
+
+    fn cohesion(&mut self, boids: &Vec<(Boid, f32)>) -> cgmath::Vector2<f32> {
+        let mut steering = cgmath::Vector2::new(0.0, 0.0);
+        let mut total = 0;
+        for other in boids {
+            let distance = other.1;
+            if distance < self.perception_size {
+                steering = steering + other.0.position;
+                total += 1;
+            }
+        }
+        if total > 0 && steering != cgmath::Vector2::new(0.0, 0.0) {
+            steering /= total as f32;
+            steering -= self.position;
+            steering = self.setMag(self.max_speed, &steering);
+            steering -= self.velocity;
+            steering = self.limit(&steering, self.cohesion_force);
+        }
+
+        return steering;
+    }
+
+    fn seperation(&mut self, boids: &Vec<(Boid, f32)>) -> cgmath::Vector2<f32> {
+        let perception = 50.0 / 2.0;
+        let mut steering = cgmath::Vector2::new(0.0, 0.0);
+        let mut total = 0;
+        for other in boids {
+            let distance = other.1;
+            if distance < perception {
+                let mut diff = self.position.clone();
+                diff -= other.0.position;
+                diff /= distance;
+                steering += diff;
+                total += 1;
+            }
+        }
+        if total > 0 && steering != cgmath::Vector2::new(0.0, 0.0) {
+            steering /= total as f32;
+            steering = self.setMag(self.max_speed, &steering);
+            steering -= self.velocity;
+            steering = self.limit(&steering, self.seperation_force);
         }
 
         return steering;
@@ -127,7 +175,7 @@ impl Flock {
             },
         );
 
-        for index in 0..1000 {
+        for index in 0..300 {
             boids.push(Boid {
                 position: cgmath::Vector2::new(
                     rng.gen::<f32>() * encoder.dimensions.0 as f32,
@@ -138,10 +186,10 @@ impl Flock {
                     (rng.gen::<f32>() * 2.0) - 1.0,
                 ),
                 acceleration: cgmath::Vector2::new(0.0, 0.0),
-                alignment_force: 0.2,
+                alignment_force: 0.4,
                 cohesion_force: 0.2,
-                seperation_force: 0.6,
-                perception_size: 100.0,
+                seperation_force: 0.4,
+                perception_size: 75.0 / 2.0,
                 max_speed: 7.0 / 2.0,
                 index,
             });
@@ -201,7 +249,6 @@ impl Flock {
         self.quadtree.reset();
 
         let test = self.boids.clone();
-
         for (pos, boid) in self.boids.iter_mut().enumerate() {
             let mut sensed: Vec<(Boid, f32)> = Vec::new();
 
@@ -210,15 +257,17 @@ impl Flock {
                     .query((boid.position.x, boid.position.y, boid.perception_size));
 
             for i in selected {
-                sensed.push((
-                    test[i],
-                    crate::Flock::wrapped_distance(
-                        boid.position,
-                        test[i].position,
-                        self.dimensions.0,
-                        self.dimensions.1,
-                    ),
-                ))
+                if boid.index != test[i].index {
+                    sensed.push((
+                        test[i],
+                        crate::Flock::wrapped_distance(
+                            boid.position,
+                            test[i].position,
+                            self.dimensions.0,
+                            self.dimensions.1,
+                        ),
+                    ))
+                }
             }
 
             boid.update(width, height, &sensed);
