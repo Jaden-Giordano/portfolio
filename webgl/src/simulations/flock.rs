@@ -248,6 +248,7 @@ impl Flock {
         self.dimensions = (width as u32, height as u32);
         self.quadtree.reset();
 
+        //got a feeling this needs to be in the loop, p sure it causes ghost boids or something when it isnt
         let test = self.boids.clone();
         for (pos, boid) in self.boids.iter_mut().enumerate() {
             let mut sensed: Vec<(Boid, f32)> = Vec::new();
