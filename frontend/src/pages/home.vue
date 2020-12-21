@@ -10,7 +10,7 @@
       </div>
     </div>
     <template #footer>
-      <span>&copy; my name lol</span>
+      <span>&copy; Aidan Chelig</span>
       <div class="contact">
         <a href="mailto:aidan.chelig@gmail.com">Email</a>
         <a href="https://github.com/Aidan-Chelig">Github</a>
