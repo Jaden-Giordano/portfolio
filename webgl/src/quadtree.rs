@@ -204,9 +204,9 @@ impl Quadtree {
     }
 
     pub fn renderroot(&self, gl: &GL, line: &drawableRect, dimensions: ScreenSpaceEncoder) {
-        let color = [0.5, 0.5, 0.5, 1.0];
+        let color = [0.16, 0.16, 0.16, 1.0];
 
-        let (mut x, mut y) = dimensions.encode(self.rectangle.x, self.rectangle.y);
+        let (x, mut y) = dimensions.encode(self.rectangle.x, self.rectangle.y);
         let (mut width, mut height) =
             dimensions.encode(self.rectangle.width, self.rectangle.height);
 
@@ -250,7 +250,7 @@ impl Quadtree {
         line: &drawableRect,
         dimensions: ScreenSpaceEncoder,
     ) {
-        let color = [0.5, 0.5, 0.5, 1.0];
+        let color = [0.16, 0.16, 0.16, 1.0];
 
         let (x, mut y) = dimensions.encode(self.rectangle.x, self.rectangle.y);
         let (mut width, mut height) =

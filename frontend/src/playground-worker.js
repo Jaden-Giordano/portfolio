@@ -6,9 +6,7 @@ onmessage = (event) => {
     const render = () => {
       client.update();
       client.render();
-      setTimeout(function () {
-        requestAnimationFrame(render);
-      }, 1000);
+      requestAnimationFrame(render);
     };
     requestAnimationFrame(render);
   });
