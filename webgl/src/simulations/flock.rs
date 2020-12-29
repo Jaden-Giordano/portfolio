@@ -37,7 +37,9 @@ impl Boid {
         self.position = self.position.add(self.velocity);
         self.velocity = self.velocity.add(self.acceleration);
         self.velocity = self.limit(&self.velocity, self.max_speed);
-        self.velocity = self.setMag(self.max_speed, &self.velocity);
+        if self.velocity.magnitude() < self.max_speed * 0.25 {
+            self.velocity = self.setMag(self.max_speed * 0.25, &self.velocity);
+        }
         //apply cohesion seperation and alignment forces
     }
 
@@ -189,7 +191,7 @@ impl Flock {
                 acceleration: cgmath::Vector2::new(0.0, 0.0),
                 alignment_force: 0.4,
                 cohesion_force: 0.2,
-                seperation_force: 0.7,
+                seperation_force: 0.4,
                 perception_size: 75.0 / 2.0,
                 max_speed: 7.0 / 2.0,
                 index,
@@ -248,7 +250,16 @@ impl Flock {
         self.aspect = width as f32 / height as f32;
         self.dimensions = (width as u32, height as u32);
         self.quadtree.set_dimensions(width as f32, height as f32);
-        self.quadtree.reset();
+        let mut newquadtree = Quadtree::new(
+            2,
+            Rect {
+                x: 0.0,
+                y: 0.0,
+                width: width as f32,
+                height: height as f32,
+            },
+        );
+        //self.quadtree.reset();
 
         //got a feeling this needs to be in the loop, p sure it causes ghost boids or something when it isnt
         let test = self.boids.clone();
@@ -275,16 +286,17 @@ impl Flock {
 
             boid.update(width, height, &sensed);
 
-            self.quadtree.insert(boid.position, pos);
+            newquadtree.insert(boid.position, pos);
         }
+        self.quadtree = newquadtree;
     }
 
     pub fn render(&self, gl: &GL) {
-        let selected = self.quadtree.query((
+        /*let selected = self.quadtree.query((
             self.dimensions.0 as f32 / 2.0,
             self.dimensions.1 as f32 / 2.0,
             100.0,
-        ));
+        ));*/
         self.quadtree.renderroot(&gl, &self.line, self.encoder);
 
         let mut color = [1.0, 1.0, 1.0, 1.0];
@@ -292,11 +304,11 @@ impl Flock {
         for (index, boid) in self.boids.iter().enumerate() {
             let ang = boid.velocity.y.atan2(boid.velocity.x);
 
-            if selected.iter().any(|&i| i == index) {
-                color = [0.0, 1.0, 0.0, 1.0];
-            } else {
-                color = [0.37, 0.22, 0.40, 1.0]
-            }
+            //if selected.iter().any(|&i| i == index) {
+            //    color = [0.0, 1.0, 0.0, 1.0];
+            //} else {
+            color = [0.37, 0.22, 0.40, 1.0];
+            //}
             let test = self.encoder.encode(boid.position.x, boid.position.y);
 
             instances.push(Instance {
