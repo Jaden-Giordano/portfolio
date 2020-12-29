@@ -1,5 +1,5 @@
 pub const SHADER: &str = r#"
-    attribute vec4 aaPosition;
+    attribute vec4 aPosition;
     uniform mat4 uTransform;
     uniform mat4 uRotation;
 

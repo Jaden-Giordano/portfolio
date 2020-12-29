@@ -1,3 +1,4 @@
+use crate::rendering::Instance;
 use cgmath::prelude::*;
 use rand::prelude::*;
 use std::ops::{Add, Div, DivAssign, Mul};
@@ -74,7 +75,7 @@ impl Boid {
             steering /= total as f32;
             steering = self.setMag(self.max_speed, &steering);
             steering -= self.velocity;
-            steering = self.limit(&steering, self.cohesion_force)
+            steering = self.limit(&steering, self.alignment_force)
         }
 
         return steering;
@@ -188,7 +189,7 @@ impl Flock {
                 acceleration: cgmath::Vector2::new(0.0, 0.0),
                 alignment_force: 0.4,
                 cohesion_force: 0.2,
-                seperation_force: 0.4,
+                seperation_force: 0.7,
                 perception_size: 75.0 / 2.0,
                 max_speed: 7.0 / 2.0,
                 index,
@@ -246,6 +247,7 @@ impl Flock {
         self.count = (self.count + 1) % 101;
         self.aspect = width as f32 / height as f32;
         self.dimensions = (width as u32, height as u32);
+        self.quadtree.set_dimensions(width as f32, height as f32);
         self.quadtree.reset();
 
         //got a feeling this needs to be in the loop, p sure it causes ghost boids or something when it isnt
@@ -286,6 +288,7 @@ impl Flock {
         self.quadtree.renderroot(&gl, &self.line, self.encoder);
 
         let mut color = [1.0, 1.0, 1.0, 1.0];
+        let mut instances = Vec::<Instance>::with_capacity(self.boids.len());
         for (index, boid) in self.boids.iter().enumerate() {
             let ang = boid.velocity.y.atan2(boid.velocity.x);
 
@@ -295,15 +298,26 @@ impl Flock {
                 color = [0.37, 0.22, 0.40, 1.0]
             }
             let test = self.encoder.encode(boid.position.x, boid.position.y);
-            self.triangle.render(
+
+            instances.push(Instance {
+                x: test.0,
+                y: test.1,
+                width: 0.05,
+                height: 0.05,
+                angle: ang - std::f32::consts::FRAC_PI_2,
+                color,
+            });
+
+            /*self.triangle.render(
                 &gl,
                 test.0,
                 test.1,
                 0.05,
-                0.05, //* self.aspect,
+                0.05, // self.aspect,
                 ang - std::f32::consts::FRAC_PI_2,
                 color,
-            );
+            );*/
         }
+        self.triangle.render_instances(&gl, instances)
     }
 }

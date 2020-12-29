@@ -1,4 +1,5 @@
 use crate::common_funcs as cf;
+use crate::rendering::Instance;
 use js_sys::{Float32Array, Uint16Array, WebAssembly};
 use wasm_bindgen::JsCast;
 use web_sys::{WebGlBuffer, WebGlProgram, WebGlRenderingContext as GL, WebGlUniformLocation};
@@ -85,5 +86,35 @@ impl Rectangle {
         gl.uniform1f(Some(&self.u_rotation), 0.0);
 
         gl.draw_elements_with_i32(GL::TRIANGLES, INDICES.len() as i32, GL::UNSIGNED_SHORT, 0);
+    }
+
+    pub fn render_instances(&self, gl: &GL, instances: Vec<Instance>) {
+        gl.use_program(Some(&self.program));
+
+        gl.bind_buffer(GL::ARRAY_BUFFER, Some(&self.vertices));
+        gl.bind_buffer(GL::ELEMENT_ARRAY_BUFFER, Some(&self.indices));
+
+        gl.vertex_attrib_pointer_with_i32(0, 2, GL::FLOAT, false, 0, 0);
+        gl.enable_vertex_attrib_array(0);
+
+        for instance in instances {
+            gl.uniform4f(
+                Some(&self.u_color),
+                instance.color[0],
+                instance.color[1],
+                instance.color[2],
+                instance.color[3],
+            );
+            gl.uniform4f(
+                Some(&self.u_scale),
+                instance.width,
+                instance.height,
+                1.0,
+                1.0,
+            );
+            gl.uniform4f(Some(&self.u_translation), instance.x, instance.y, 0.0, 0.0);
+            gl.uniform1f(Some(&self.u_rotation), instance.angle);
+            gl.draw_elements_with_i32(GL::TRIANGLES, INDICES.len() as i32, GL::UNSIGNED_SHORT, 0);
+        }
     }
 }

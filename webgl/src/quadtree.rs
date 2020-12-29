@@ -198,6 +198,11 @@ impl Quadtree {
         return found;
     }
 
+    pub fn set_dimensions(&mut self, width: f32, height: f32) {
+        self.rectangle.width = width;
+        self.rectangle.height = height;
+    }
+
     pub fn renderroot(&self, gl: &GL, line: &drawableRect, dimensions: ScreenSpaceEncoder) {
         let color = [0.5, 0.5, 0.5, 1.0];
 
