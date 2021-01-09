@@ -55,10 +55,16 @@
       box-sizing: border-box;
       color: white;
       display: flex;
-      font-family: Roboto;
       justify-content: space-between;
-      padding: 1rem 0.5rem;
       width: 100%;
+      padding-left: 1.5rem;
+
+      &__text {
+        font-family: Roboto;
+        font-weight: 300;
+        color: grey;
+        letter-spacing: 0.075rem;
+      }
     }
   }
 </style>

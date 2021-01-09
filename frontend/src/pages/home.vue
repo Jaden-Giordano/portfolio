@@ -47,12 +47,12 @@
       </div>
     </template>
     <template #footer>
-      <span>&copy; Aidan Chelig</span>
+      <span class="footer__text">2020 &copy; Aidan Chelig</span>
       <div class="contact">
-        <a href="mailto:aidan.chelig@gmail.com">Email</a>
-        <a href="https://github.com/Aidan-Chelig">Github</a>
-        <a href="https://www.linkedin.com/in/aidan-chelig-9a296613a/">LinkedIn</a>
-        <a href="https://drive.google.com/file/d/1G3cGu572gyr7cMqneHjFX6rSq7tB9f-S/view?usp=sharing">
+        <a class="nav-link" href="mailto:aidan.chelig@gmail.com">Email</a>
+        <a class="nav-link" href="https://github.com/Aidan-Chelig">Github</a>
+        <a class="nav-link" href="https://www.linkedin.com/in/aidan-chelig-9a296613a/">LinkedIn</a>
+        <a class="nav-link" href="https://drive.google.com/file/d/1G3cGu572gyr7cMqneHjFX6rSq7tB9f-S/view?usp=sharing">
           Resume
         </a>
       </div>
@@ -79,16 +79,6 @@ export default {
   color: white;
   display: flex;
   justify-content: space-between;
-
-  a {
-    color: white !important;
-    margin-right: 0.25rem;
-
-    &:not(:last-child)::after {
-      content: "|";
-      margin-left: 0.25rem;
-    }
-  }
 }
 
 .title {
@@ -151,6 +141,7 @@ export default {
 
 .projects {
   display: flex;
+  flex-wrap: wrap;
 
   & > * {
     margin-right: 2rem;

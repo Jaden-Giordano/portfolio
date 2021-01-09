@@ -46,7 +46,7 @@
 
       .project__icon {
         align-self: center;
-        color: grey;
+        color: #3a3a3a;
         width: 1.5rem;
         height: 1.5rem;
       }
