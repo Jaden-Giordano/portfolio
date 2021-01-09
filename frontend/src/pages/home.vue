@@ -103,7 +103,10 @@ export default {
     color: white;
     display: flex;
     font-family: Roboto;
+    font-weight: 300;
     font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.075rem;
     margin-top: 0.75rem;
 
     span {
