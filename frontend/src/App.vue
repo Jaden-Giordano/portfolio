@@ -1,7 +1,5 @@
 <template>
-  <div class="container">
-    <home />
-  </div>
+  <home />
 </template>
 
 <script>
@@ -15,9 +13,7 @@
 </script>
 
 <style lang="scss">
-  .container {
+  body {
     background-color: #202020;
-    height: 100%;
-    width: 100%;
   }
 </style>

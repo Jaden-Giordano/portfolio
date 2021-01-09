@@ -1,6 +1,6 @@
 <template>
-  <div class="playground">
-    <canvas ref="canvas" :height="height" :width="width" />
+  <div class="playground" ref="root">
+    <canvas ref="canvas" width="100%" height="100%" />
   </div>
 </template>
 
@@ -9,16 +9,18 @@
 
   export default {
     setup: () => {
-      const width = ref(document.body.clientWidth);
-      const height = ref(document.body.clientHeight - 8);
+      const root = ref(null);
       const canvas = ref(null);
 
       window.addEventListener("resize", () => {
-        width.value = document.body.clientWidth;
-        height.value = document.body.clientHeight - 8;
+        canvas.width = root.value.offsetWidth;
+        canvas.height = root.value.offsetHeight;
       });
 
       onMounted(async () => {
+        canvas.value.width = root.value.offsetWidth;
+        canvas.value.height = root.value.offsetHeight;
+
         // Use OffscreenCanvas if browser supports it.
         if (canvas.value.transferControlToOffscreen) {
           const worker = new Worker('../playground-worker.js', { type: 'module' });
@@ -42,8 +44,7 @@
 
       return {
         canvas,
-        height,
-        width,
+        root,
       };
     },
   }
@@ -53,6 +54,5 @@
 .playground {
   box-sizing: border-box;
   height: 100%;
-  width: 100%;
 }
 </style>

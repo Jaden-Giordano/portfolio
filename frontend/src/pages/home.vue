@@ -1,6 +1,6 @@
 <template>
   <page>
-    <div class="home">
+    <div slot="main" class="header">
       <span class="title">Aidan Chelig</span>
       <hr />
       <div class="tags">
@@ -9,18 +9,52 @@
         <span>Design</span>
       </div>
     </div>
+    <template #secondary>
+      <h1 class="title">
+        What I've been working on...
+      </h1>
+      <div class="projects">
+        <project
+          title="Something"
+          content="We did some really cool stuff this one time using this one thing and this other thing. It was really cool."
+        >
+          <rust-icon slot="icon" class="project__icon" />
+          <template #links>
+            <a class="link-button" href="#">Source</a>
+            <a class="link-button" href="#">Demo</a>
+          </template>
+        </project>
+        <project
+          title="Something"
+          content="We did some really cool stuff this one time using this one thing and this other thing. It was really cool."
+        >
+          <rust-icon slot="icon" class="project__icon" />
+          <template #links>
+            <a class="link-button" href="#">Source</a>
+            <a class="link-button" href="#">Demo</a>
+          </template>
+        </project>
+        <project
+          title="Something"
+          content="We did some really cool stuff this one time using this one thing and this other thing. It was really cool."
+        >
+          <rust-icon slot="icon" class="project__icon" />
+          <template #links>
+            <a class="link-button" href="#">Source</a>
+            <a class="link-button" href="#">Demo</a>
+          </template>
+        </project>
+      </div>
+    </template>
     <template #footer>
       <span>&copy; Aidan Chelig</span>
       <div class="contact">
         <a href="mailto:aidan.chelig@gmail.com">Email</a>
         <a href="https://github.com/Aidan-Chelig">Github</a>
-        <a href="https://www.linkedin.com/in/aidan-chelig-9a296613a/"
-          >LinkedIn</a
-        >
-        <a
-          href="https://drive.google.com/file/d/1G3cGu572gyr7cMqneHjFX6rSq7tB9f-S/view?usp=sharing"
-          >Resume</a
-        >
+        <a href="https://www.linkedin.com/in/aidan-chelig-9a296613a/">LinkedIn</a>
+        <a href="https://drive.google.com/file/d/1G3cGu572gyr7cMqneHjFX6rSq7tB9f-S/view?usp=sharing">
+          Resume
+        </a>
       </div>
     </template>
   </page>
@@ -28,10 +62,14 @@
 
 <script>
 import Page from "@/components/page";
+import Project from '@/components/project';
+import RustIcon from '@/components/icons/rust';
 
 export default {
   components: {
     Page,
+    Project,
+    RustIcon
   },
 };
 </script>
@@ -53,19 +91,18 @@ export default {
   }
 }
 
-.home {
+.title {
+  color: white;
+  font-family: "Rock Salt";
+  font-size: 2rem;
+}
+
+.header {
   align-items: center;
   display: flex;
   flex-direction: column;
   height: 100%;
   justify-content: center;
-  width: 100%;
-
-  .title {
-    color: white;
-    font-family: "Rock Salt";
-    font-size: 2rem;
-  }
 
   hr {
     border-color: white;
@@ -108,6 +145,18 @@ export default {
           content: "";
         }
       }
+    }
+  }
+}
+
+.projects {
+  display: flex;
+
+  & > * {
+    margin-right: 2rem;
+
+    &:last-child {
+      margin-right: 0;
     }
   }
 }

@@ -6,3 +6,18 @@ html, body {
   padding: 0;
   width: 100%;
 }
+
+.link-button {
+  font-family: Roboto;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  text-decoration: none;
+  color: lightgrey;
+  text-transform: uppercase;
+  border-radius: 4px;
+
+  &:hover {
+    transition: background 0.25s;
+    background: rgba(1, 1, 1, 0.5);
+  }
+}
