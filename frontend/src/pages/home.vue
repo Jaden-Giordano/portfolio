@@ -1,59 +1,42 @@
 <template>
   <page>
     <div slot="main" class="header">
-      <span class="title">Aidan Chelig</span>
+      <span class="title glow">{{ name }}</span>
       <hr />
       <div class="tags">
-        <span>Frontend</span>
-        <span>Game Development</span>
-        <span>Design</span>
+        <span v-for="tag in tags" :key="tag">{{tag}}</span>
       </div>
     </div>
     <template #secondary>
-      <h1 class="title">
-        What I've been working on...
+      <h1 class="title glow">
+        {{projectsTitle}}
       </h1>
       <div class="projects">
         <project
-          title="Something"
-          content="We did some really cool stuff this one time using this one thing and this other thing. It was really cool."
+          v-for="project in projects"
+          :key="project.name"
+          :title="project.name"
+          :content="project.description"
         >
-          <rust-icon slot="icon" class="project__icon" />
+          <project-icon :lang="project.language" />
           <template #links>
-            <a class="link-button" href="#">Source</a>
-            <a class="link-button" href="#">Demo</a>
-          </template>
-        </project>
-        <project
-          title="Something"
-          content="We did some really cool stuff this one time using this one thing and this other thing. It was really cool."
-        >
-          <rust-icon slot="icon" class="project__icon" />
-          <template #links>
-            <a class="link-button" href="#">Source</a>
-            <a class="link-button" href="#">Demo</a>
-          </template>
-        </project>
-        <project
-          title="Something"
-          content="We did some really cool stuff this one time using this one thing and this other thing. It was really cool."
-        >
-          <rust-icon slot="icon" class="project__icon" />
-          <template #links>
-            <a class="link-button" href="#">Source</a>
-            <a class="link-button" href="#">Demo</a>
+            <a
+              v-for="link in project.links"
+              :key="link.name"
+              :href="link.href"
+              class="link-button"
+            >
+              {{link.name}}
+            </a>
           </template>
         </project>
       </div>
     </template>
     <template #footer>
-      <span class="footer__text">2020 &copy; Aidan Chelig</span>
+      <span class="footer__text">2021 &copy; {{name}}</span>
       <div class="contact">
-        <a class="nav-link" href="mailto:aidan.chelig@gmail.com">Email</a>
-        <a class="nav-link" href="https://github.com/Aidan-Chelig">Github</a>
-        <a class="nav-link" href="https://www.linkedin.com/in/aidan-chelig-9a296613a/">LinkedIn</a>
-        <a class="nav-link" href="https://drive.google.com/file/d/1G3cGu572gyr7cMqneHjFX6rSq7tB9f-S/view?usp=sharing">
-          Resume
+        <a class="nav-link" v-for="link in externalLinks" :key="link.name" :href="link.href">
+          {{link.name}}
         </a>
       </div>
     </template>
@@ -61,16 +44,18 @@
 </template>
 
 <script>
+import config from '@/config';
 import Page from "@/components/page";
 import Project from '@/components/project';
-import RustIcon from '@/components/icons/rust';
+import ProjectIcon from '@/components/project-icon';
 
 export default {
   components: {
     Page,
     Project,
-    RustIcon
+    ProjectIcon,
   },
+  setup: () => (config || {}),
 };
 </script>
 
@@ -145,6 +130,7 @@ export default {
 .projects {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
 
   & > * {
     margin-right: 2rem;

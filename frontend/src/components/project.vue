@@ -29,6 +29,7 @@
     max-width: 25rem;
     background: rgba(1, 1, 1, 0.2);
     padding: 1rem;
+    height: auto;
 
     &__header {
       display: flex;
@@ -42,13 +43,6 @@
         font-size: 1.5rem;
         font-weight: 500;
         margin: 0;
-      }
-
-      .project__icon {
-        align-self: center;
-        color: #3a3a3a;
-        width: 1.5rem;
-        height: 1.5rem;
       }
     }
 

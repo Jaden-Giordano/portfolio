@@ -64,7 +64,7 @@ impl GoL {
         count
     }
 
-    pub fn update(&mut self) {
+    pub fn update(&mut self, width: i32, height: i32) {
         let mut tiles_buffer = self.tiles.clone();
         for (index, tile) in self.tiles.iter().enumerate() {
             let (x, y) = self.decode(index);
@@ -75,7 +75,7 @@ impl GoL {
         self.tiles = tiles_buffer;
     }
 
-    pub fn render(&self, gl: &GL, aspect: f32) {
+    pub fn render(&self, gl: &GL) {
         for (index, &active) in self.tiles.iter().enumerate() {
             let (col, row) = self.decode(index);
             let width = 2.0 / self.dimensions.0 as f32;
