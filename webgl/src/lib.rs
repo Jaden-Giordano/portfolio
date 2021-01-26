@@ -23,8 +23,9 @@ extern "C" {
 #[wasm_bindgen]
 pub struct FolioClient {
     gl: WebGlRenderingContext,
+    sim: Flock,
     //sim: FallingSand,
-    sim: GoL,
+    //sim: GoL,
 }
 
 #[wasm_bindgen]
@@ -34,12 +35,12 @@ impl FolioClient {
         console_error_panic_hook::set_once();
         let width = gl.drawing_buffer_width();
         let height = gl.drawing_buffer_height();
-        let gol = GoL::new(&gl, width as u32 / 10, height as u32 / 10);
+        //let gol = GoL::new(&gl, width as u32 / 10, height as u32 / 10);
         //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
         // let falling_sand = FallingSand::new(&gl, width as u32 / 5, height as u32 / 5);
-        // let flock = Flock::new(&gl, width as u32, height as u32);
+        let flock = Flock::new(&gl, width as u32, height as u32);
 
-        Self { gl, sim: gol }
+        Self { gl, sim: flock }
     }
 
     pub fn update(&mut self) -> Result<(), JsValue> {
