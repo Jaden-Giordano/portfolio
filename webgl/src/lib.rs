@@ -23,31 +23,46 @@ extern "C" {
 #[wasm_bindgen]
 pub struct FolioClient {
     gl: WebGlRenderingContext,
-    sim: Flock,
-    //sim: FallingSand,
-    //sim: GoL,
+    flock: Flock,
+    fallingsim: FallingSand,
+    golsim: GoL,
+    n: u16,
 }
 
 #[wasm_bindgen]
 impl FolioClient {
     #[wasm_bindgen(constructor)]
-    pub fn new(gl: WebGlRenderingContext) -> Self {
+    pub fn new(gl: WebGlRenderingContext, n: u16) -> Self {
         console_error_panic_hook::set_once();
         let width = gl.drawing_buffer_width();
         let height = gl.drawing_buffer_height();
-        //let gol = GoL::new(&gl, width as u32 / 10, height as u32 / 10);
+        let gol = GoL::new(&gl, width as u32 / 10, height as u32 / 10);
+        let fs = FallingSand::new(&gl, width as u32 / 10, height as u32 / 10);
         //*****let flock = Flock::new(&gl, canvas.width() / 10, canvas.height() / 10);
-        // let falling_sand = FallingSand::new(&gl, width as u32 / 5, height as u32 / 5);
         let flock = Flock::new(&gl, width as u32, height as u32);
 
-        Self { gl, sim: flock }
+        Self {
+            gl,
+            flock: flock,
+            fallingsim: fs,
+            golsim: gol,
+            n,
+        }
     }
 
     pub fn update(&mut self) -> Result<(), JsValue> {
-        self.sim.update(
-            self.gl.drawing_buffer_width(),
-            self.gl.drawing_buffer_height(),
-        );
+        match self.n {
+            0 => self.flock.update(
+                self.gl.drawing_buffer_width(),
+                self.gl.drawing_buffer_height(),
+            ),
+            1 => self.fallingsim.update(),
+            2 => self.golsim.update(
+                self.gl.drawing_buffer_width(),
+                self.gl.drawing_buffer_height(),
+            ),
+            _ => println!("err"),
+        }
         Ok(())
     }
 
@@ -60,6 +75,13 @@ impl FolioClient {
         );
         self.gl.clear(GL::COLOR_BUFFER_BIT | GL::DEPTH_BUFFER_BIT);
 
-        self.sim.render(&self.gl);
+        match self.n {
+            0 => self.flock.render(&self.gl),
+            1 => self.fallingsim.render(&self.gl),
+            2 => self.golsim.render(&self.gl),
+            _ => println!("err"),
+        }
+
+        //self.sim.render(&self.gl);
     }
 }

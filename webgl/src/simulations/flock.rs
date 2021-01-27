@@ -105,7 +105,7 @@ impl Boid {
     }
 
     fn seperation(&mut self, boids: &Vec<(Boid, f32)>) -> cgmath::Vector2<f32> {
-        let perception = 50.0 / 2.0;
+        let perception = 50.0 / 1.75;
         let mut steering = cgmath::Vector2::new(0.0, 0.0);
         let mut total = 0;
         for other in boids {
