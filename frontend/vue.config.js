@@ -8,7 +8,7 @@ module.exports = {
       .plugin("worker")
       .use(WorkerPlugin, [{ filename: "[name].worker.js" }]);
     config.plugin("html").tap((args) => {
-      args[0].title = "aidanmadeit.xyz";
+      args[0].title = "greymouth.io";
       return args;
     });
   },
