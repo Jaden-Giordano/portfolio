@@ -5,4 +5,9 @@ services:
     branch: main
     deploy_on_push: true
     repo: Aidan-Chelig/portfolio
+  http_port: 80
+  health_check:
+    http_path: /
+  routes:
+  - path: /
   name: web-server
