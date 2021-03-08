@@ -2,7 +2,7 @@ name: portfolio
 services:
 - dockerfile_path: Dockerfile
   github:
-    branch: main
+    branch: jaden
     deploy_on_push: true
     repo: Jaden-Giordano/portfolio
   http_port: 80
