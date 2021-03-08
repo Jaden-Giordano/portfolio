@@ -4,5 +4,5 @@ services:
   github:
     branch: main
     deploy_on_push: true
-    repo: Jaden-Giordano/portfolio
+    repo: Aidan-Chelig/portfolio
   name: web-server
