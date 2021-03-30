@@ -3,7 +3,7 @@ use web_sys::WebGlRenderingContext as GL;
 use rand::prelude::*;
 
 use crate::{
-    rendering::Rectangle,
+    rendering::{Rectangle, Instance},
     simulations::Simulation,
     utils::{CoordinateEncoder, FlatEncoder},
 };
@@ -160,6 +160,8 @@ impl Simulation for FallingSand {
     }
 
     fn render(&self, gl: &GL) {
+        let mut instances = Vec::<Instance>::with_capacity(self.tiles.tiles.len());
+        self.renderer.bind(gl);
         for tile in &self.tiles.tiles {
             let tile = tile.get();
             let width = 2.0 / self.dimensions.0 as f32;
@@ -173,7 +175,16 @@ impl Simulation for FallingSand {
             } else {
                 [0.0,0.0,0.0,0.0]
             };
-            self.renderer.render(gl, x, y, width, height, color);
+
+            instances.push(Instance {
+                x,
+                y,
+                width,
+                height,
+                angle: 0.0,
+                color,
+            });
         }
+        self.renderer.render_instances(gl, instances);
     }
 }
