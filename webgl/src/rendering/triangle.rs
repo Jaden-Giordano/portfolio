@@ -82,14 +82,6 @@ impl Triangle {
         rotation: f32,
         color: [f32; 4],
     ) {
-        gl.use_program(Some(&self.program));
-
-        gl.bind_buffer(GL::ARRAY_BUFFER, Some(&self.vertex_buffer));
-        gl.bind_buffer(GL::ELEMENT_ARRAY_BUFFER, Some(&self.indices));
-
-        gl.vertex_attrib_pointer_with_i32(0, 2, GL::FLOAT, false, 0, 0);
-        gl.enable_vertex_attrib_array(0);
-
         gl.uniform4f(Some(&self.u_color), color[0], color[1], color[2], color[3]);
         gl.uniform4f(Some(&self.u_scale), width, height, 1.0, 1.0);
         gl.uniform4f(Some(&self.u_translation), x, y, 0.0, 0.0);
@@ -98,7 +90,7 @@ impl Triangle {
         gl.draw_elements_with_i32(GL::TRIANGLES, INDICES.len() as i32, GL::UNSIGNED_SHORT, 0);
     }
 
-    pub fn render_instances(&self, gl: &GL, instances: Vec<Instance>) {
+    pub fn bind(&self, gl: &GL) {
         gl.use_program(Some(&self.program));
 
         gl.bind_buffer(GL::ARRAY_BUFFER, Some(&self.vertex_buffer));
@@ -106,7 +98,10 @@ impl Triangle {
 
         gl.vertex_attrib_pointer_with_i32(0, 2, GL::FLOAT, false, 0, 0);
         gl.enable_vertex_attrib_array(0);
+    }
 
+    pub fn render_instances(&self, gl: &GL, instances: Vec<Instance>) {
+        self.bind(gl);
         for instance in instances {
             gl.uniform4f(
                 Some(&self.u_color),

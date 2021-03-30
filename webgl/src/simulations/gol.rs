@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use web_sys::WebGlRenderingContext as GL;
 
-use crate::rendering::Rectangle;
+use crate::rendering::{Rectangle, Instance};
 
 pub struct GoL {
     dimensions: (u32, u32),
@@ -76,6 +76,7 @@ impl GoL {
     }
 
     pub fn render(&self, gl: &GL) {
+        let mut instances = Vec::<Instance>::with_capacity(self.tiles.len());
         for (index, &active) in self.tiles.iter().enumerate() {
             let (col, row) = self.decode(index);
             let width = 2.0 / self.dimensions.0 as f32;
@@ -87,7 +88,16 @@ impl GoL {
             } else {
                 [0.0, 0.0, 0.0, 0.0]
             };
-            self.renderer.render(gl, x, y, width, height, color);
+
+            instances.push(Instance {
+                x,
+                y,
+                width,
+                height,
+                angle: 0.0,
+                color,
+            });
         }
+        self.renderer.render_instances(gl, instances);
     }
 }

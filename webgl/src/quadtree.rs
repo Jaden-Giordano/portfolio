@@ -215,6 +215,7 @@ impl Quadtree {
 
         y = height + y;
 
+        line.bind(gl);
         line.render(&gl, x, y, width, -0.007, color);
 
         line.render(&gl, x, y - width, 0.004, height, color);
